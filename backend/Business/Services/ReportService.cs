@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
+using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data;
 using backend.Data.Models;
-using Microsoft.AspNetCore.Mvc;
 
 
 namespace backend.Business.Services
@@ -12,30 +13,35 @@ namespace backend.Business.Services
     public class ReportService: IReportService  
     {
         private readonly ApplicationDbContext _context; //variable that represents the Database
+        private readonly IMapper _mapper;
 
-        public ReportService(ApplicationDbContext context)
+        public ReportService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public List<Report> GetAll()
+        public List<ReportDto> GetAll()
         {
-            return _context.Reports.ToList();
+            var all = _context.Reports.ToList();
+            return _mapper.Map<List<ReportDto>>(all);
         }
 
-        public Report GetById(int id)
+        public ReportDto GetById(int id)
         {
-             return _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            return _mapper.Map<ReportDto>(result);
         }
 
-        public Report AddNewReport(Report newReport)
+        public ReportDto AddNewReport(ReportDto newReport)
         {
-            _context.Reports.Add(newReport);
+            var mapperReport = _mapper.Map<Report>(newReport);
+            _context.Reports.Add(mapperReport);
             _context.SaveChanges();
-            return newReport;
+            return _mapper.Map<ReportDto>(mapperReport);
         }
 
-        public Report UpdateReport(int id, Report updateReport)
+        public ReportDto UpdateReport(int id, ReportDto updateReport)
         {
             var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
             if (result == null) return null;
@@ -49,7 +55,7 @@ namespace backend.Business.Services
             result.SeverityLevel = updateReport.SeverityLevel;
 
             _context.SaveChanges();
-            return result;
+            return _mapper.Map<ReportDto>(result); ;
         }
 
         public void Delete(int id)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpGet]
-        public List<Report> Get()
+        public List<ReportDto> Get()
         {
             return _reportService.GetAll();
         }
@@ -38,7 +39,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public IActionResult AddNewReport([FromBody] Report newReport)
+        public IActionResult AddNewReport([FromBody] ReportDto newReport)
         {
             if (newReport == null) return BadRequest();
             var result = _reportService.AddNewReport(newReport);
@@ -49,7 +50,7 @@ namespace backend.Controllers
         // One of the parameters are empty
         // https://localhost:44341/report/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateReport(int id, [FromBody] Report updateReport)
+        public IActionResult UpdateReport(int id, [FromBody] ReportDto updateReport)
         {
             if (updateReport == null) return BadRequest();
 

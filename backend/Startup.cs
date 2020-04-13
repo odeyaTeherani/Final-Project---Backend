@@ -1,6 +1,8 @@
 //program.cs call to Startup
 //here we define everything we need for the project
 
+using AutoMapper;
+using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Business.Services;
 using Microsoft.AspNetCore.Authentication;
@@ -39,7 +41,13 @@ namespace backend
             
             // DI Settings
             services.AddTransient<IReportService, ReportService>();
-            
+
+            // Mapping Settings
+            var mappingConfig = services.InitMappings();
+            var mapper = mappingConfig.CreateMapper();
+            services.AddSingleton(mapper);
+
+
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
