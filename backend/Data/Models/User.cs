@@ -13,7 +13,7 @@ namespace backend.Data.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string userName { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
 
 

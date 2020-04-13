@@ -10,13 +10,12 @@ namespace backend.Data.Models
     [Table("Events")]
     public class Event
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
+        [Key] // "EventId" is primary key (uniq)
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The "EventId" will be managed automatically
+        public int Id { get; set; } //primary key
         public string EventType { get; set; }
         public string SeverityLevel { get; set; }
         public string Location { get; set; }
         public DateTime Date { get; set; }
-
     }
 }

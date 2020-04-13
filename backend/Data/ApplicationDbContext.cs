@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using backend.Data.Models;
+using IdentityModel;
 
 namespace backend.Data
 {
@@ -16,38 +17,10 @@ namespace backend.Data
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
+        { }
 
-        public static List<Event> Events = new List<Event>
-        {
-            new Event{Id = 1, Location = "Event 1", Date = new DateTime()},
-            new Event{Id = 2, Location = "Event 2", Date = new DateTime()},
-            new Event{Id = 3, Location = "Event 3", Date = new DateTime()}
-
-        };        
-        
-        public static List<User> Users = new List<User>
-        {
-            new User{Id = 1, Password = "1111", userName = "odeya"},
-            new User{Id = 2, Password = "2222", userName = "david"}
-        };        
-        
-        public static List<Report> Reports = new List<Report>
-        {
-
-        };
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Server = localhost;Database=events;Trusted_Connection=True;");
-        
-        }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
+        public DbSet<Event> Events { get; set; } // reference to the Database - list that represents a table of events in the database
+        public DbSet<User> Users { get; set; } // reference to the Database - list that represents a table of users in the database
+        public DbSet<Report> Reports { get; set; } // reference to the Database - list that represents a table of reports in the database
     }
 }

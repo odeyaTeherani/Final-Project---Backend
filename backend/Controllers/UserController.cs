@@ -13,18 +13,25 @@ namespace backend.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
+        private readonly ApplicationDbContext _context;
+
+        public UserController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         // https://localhost:44341/user
         [HttpGet]
         public List<User> Get()
         {
-            return ApplicationDbContext.Users;
+            return _context.Users.ToList();
         }
 
         // https://localhost:44341/user/{id}
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var result = ApplicationDbContext.Users.Find(e => e.Id == id);
+            var result = _context.Users.SingleOrDefault(e => e.Id == id);  // Make sure it is single and if you didn't find return null
             if (result == null) return NotFound();
             return Ok(result);
         }
@@ -34,26 +41,25 @@ namespace backend.Controllers
         public IActionResult AddNewUser([FromBody] User newUser)
         {
             if (newUser == null) return BadRequest();
-            newUser.Id = ApplicationDbContext.Users.Max(e => e.Id) + 1;
-            ApplicationDbContext.Users.Add(newUser);
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
             return CreatedAtAction("GetById", new {id = newUser.Id}, newUser);
-
         }
 
-        // Don't work
         // One of the parameters are empty
         // https://localhost:44341/user/{id}
-        [HttpPut("id")]
-        public IActionResult Put(int id, [FromBody] User updateUser)
+        [HttpPut("{id}")]
+        public IActionResult UpdateUser(int id, [FromBody] User updateUser)
         {
             if (updateUser == null) return BadRequest();
 
-            var result = ApplicationDbContext.Users.Find(e => e.Id == id);
+            var result = _context.Users.SingleOrDefault(e => e.Id == id);
             if (result == null) return NotFound();
 
-            result.userName = updateUser.userName;
+            result.UserName = updateUser.UserName;
             result.Password = updateUser.Password;
 
+            _context.SaveChanges();
             return NoContent();
         }
 
@@ -61,10 +67,11 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var result = ApplicationDbContext.Users.Find(e => e.Id == id);
+            var result = _context.Users.SingleOrDefault(e => e.Id == id);
             if (result == null) return NotFound();
 
-            ApplicationDbContext.Users.Remove(result);
+            _context.Users.Remove(result);
+            _context.SaveChanges();
             return Ok();
         }
     }
