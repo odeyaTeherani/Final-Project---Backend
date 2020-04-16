@@ -30,6 +30,7 @@ namespace backend.Business.Services
         public ReportDto GetById(int id)
         {
             var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            if (result == null) return null;
             return _mapper.Map<ReportDto>(result);
         }
 
@@ -45,14 +46,15 @@ namespace backend.Business.Services
         {
             var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
             if (result == null) return null;
+
             result.CarNumber = updateReport.CarNumber;
             result.Date = updateReport.Date;
             result.EventType = updateReport.EventType;
             result.Location = updateReport.Location;
             result.Name = updateReport.Name;
             result.Note = updateReport.Note;
-            result.NumOfEv = updateReport.NumOfEv;
-            result.SeverityLevel = updateReport.SeverityLevel;
+            result.Casualties = updateReport.Casualties;
+            result.SeverityLevelType = updateReport.SeverityLevelType;
 
             _context.SaveChanges();
             return _mapper.Map<ReportDto>(result); ;

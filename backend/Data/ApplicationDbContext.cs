@@ -22,5 +22,6 @@ namespace backend.Data
         public DbSet<Event> Events { get; set; } // reference to the Database - list that represents a table of events in the database
         public DbSet<User> Users { get; set; } // reference to the Database - list that represents a table of users in the database
         public DbSet<Report> Reports { get; set; } // reference to the Database - list that represents a table of reports in the database
+        public DbSet<EventType> EventTypes { get; set; } // reference to the Database - list that represents a table of reports in the database
     }
 }
