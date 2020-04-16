@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -43,7 +43,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventTypeDto>(mapperEventType);
         }
 
-        public EventTypeDto UpdateReport(int id, [FromBody] EventTypeDto updateEventType)
+        public EventTypeDto UpdateEventType(int id, [FromBody] EventTypeDto updateEventType)
         {
             var result = _context.EventTypes.SingleOrDefault(e => e.Id == id);
             if (result == null) return null;

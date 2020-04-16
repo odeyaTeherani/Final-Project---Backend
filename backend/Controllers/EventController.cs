@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using backend.Business.Dto;
+using backend.Business.Interfaces;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -14,36 +16,35 @@ namespace backend.Controllers
     [Route("[controller]")]
     public class EventController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IEventService _eventService;
 
-        public EventController(ApplicationDbContext context)
+        public EventController(IEventService eventService)
         {
-            _context = context;
+            _eventService = eventService; ;
         }
 
         // https://localhost:44341/event
         [HttpGet]
-        public List<Event> Get()
+        public List<EventDto> Get()
         {
-            return _context.Events.ToList();
+            return _eventService.GetAll();
         }
 
         // https://localhost:44341/event/{id}
         [HttpGet("{id}")]
         public IActionResult GetById(int id)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id);
+            var result = _eventService.GetById(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         // https://localhost:44341/event
         [HttpPost]
-        public IActionResult AddNewEvent([FromBody] Event newEvent)
+        public IActionResult AddNewEvent([FromBody] EventDto newEvent)
         {
             if (newEvent == null) return BadRequest();
-            _context.Events.Add(newEvent);
-            _context.SaveChanges();
+            var result = _eventService.AddNewEvent(newEvent);
             return CreatedAtAction("GetById", new {id = newEvent.Id}, newEvent);
 
         }
@@ -51,16 +52,12 @@ namespace backend.Controllers
         // One of the parameters are empty
         // https://localhost:44341/event/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateEvent(int id, [FromBody] Event updateEvent)
+        public IActionResult UpdateEvent(int id, [FromBody] EventDto updateEvent)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id);
-            if (result == null) return NotFound();
+            if (updateEvent == null) return BadRequest();
 
-            result.EventType = updateEvent.EventType;
-            result.Location = updateEvent.Location;
-            result.SeverityLevel = updateEvent.SeverityLevel;
-            result.Date = updateEvent.Date;
-            _context.SaveChanges();
+            var result = _eventService.UpdateEvent(id, updateEvent);
+            if (result == null) return NotFound();
             return NoContent();
         }
 
@@ -68,12 +65,15 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id);
-            if (result == null) return NotFound();
-
-            _context.Events.Remove(result);
-            _context.SaveChanges();
-            return Ok();
+            try
+            {
+                _eventService.Delete(id);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return NotFound(e.Message);
+            }
         }
     }
 }
