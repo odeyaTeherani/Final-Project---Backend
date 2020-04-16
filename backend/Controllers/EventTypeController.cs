@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    // [Route("[controller]")]
+    [Route("[controller]")]
     public class EventTypeController: ControllerBase
     {
         private readonly IEventTypeService _eventTypeService;
@@ -38,10 +38,10 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType
         [HttpPost]
-        public IActionResult AddNewEventType([FromBody] EventTypeDto newReport)
+        public IActionResult AddNewEventType([FromBody] EventTypeDto newEventType)
         {
-            if (newReport == null) return BadRequest();
-            var result = _eventTypeService.AddNewEventType(newReport);
+            if (newEventType == null) return BadRequest();
+            var result = _eventTypeService.AddNewEventType(newEventType);
             return CreatedAtAction("GetById", new { id = result.Id }, result);
         }
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -50,7 +49,6 @@ namespace backend.Business.Services
 
             result.Date = updateEvent.Date;
             result.EventType = updateEvent.EventType;
-            result.Id = updateEvent.Id;
             result.Images = updateEvent.Images;
             result.Location = updateEvent.Location;
             result.Reports = updateEvent.Reports;
