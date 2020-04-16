@@ -58,7 +58,7 @@ namespace backend.Controllers
 
             result.EventType = updateEvent.EventType;
             result.Location = updateEvent.Location;
-            result.SeverityLevel = updateEvent.SeverityLevel;
+            //result.SeverityLevel = updateEvent.SeverityLevel;
             result.Date = updateEvent.Date;
             _context.SaveChanges();
             return NoContent();
