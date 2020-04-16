@@ -16,9 +16,10 @@ namespace backend.Data
         public ApplicationDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
-        {
-        }
+        { }
 
+        public DbSet<Event> Events { get; set; }
+        /*
         public static List<Event> Events = new List<Event>
         {
             new Event{Id = 1, Location = "Event 1", Date = new DateTime()},
@@ -37,6 +38,7 @@ namespace backend.Data
         {
 
         };
+        */
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
