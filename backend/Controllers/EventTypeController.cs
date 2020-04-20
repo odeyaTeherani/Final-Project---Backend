@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    // [Route("[controller]")]
+    [Route("[controller]")]
     public class EventTypeController: ControllerBase
     {
         private readonly IEventTypeService _eventTypeService;

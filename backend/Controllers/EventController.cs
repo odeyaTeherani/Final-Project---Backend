@@ -25,6 +25,7 @@ namespace backend.Controllers
         [HttpGet]
         public List<Event> Get()
         {
+            throw new Exception("abc");
             return _context.Events.ToList();
         }
 
@@ -58,7 +59,7 @@ namespace backend.Controllers
 
             result.EventType = updateEvent.EventType;
             result.Location = updateEvent.Location;
-            result.SeverityLevel = updateEvent.SeverityLevel;
+            result.SeverityLevelType = updateEvent.SeverityLevelType;
             result.Date = updateEvent.Date;
             _context.SaveChanges();
             return NoContent();

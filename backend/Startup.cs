@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
+using backend.Filters;
 using backend.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,6 +48,9 @@ namespace backend
             var mapper = mappingConfig.CreateMapper();
             services.AddSingleton(mapper);
 
+            // add the action filter to the filters collection
+            services.AddControllers(options =>
+                options.Filters.Add(new HttpResponseExceptionFilter()));
 
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -70,6 +74,7 @@ namespace backend
         {
             if (env.IsDevelopment())  // if we are in development environment
             {
+                app.UseExceptionHandler("/error-local-development");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }
