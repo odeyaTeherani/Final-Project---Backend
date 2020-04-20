@@ -61,10 +61,5 @@ namespace backend.Business.Services
             _context.EventTypes.Remove(result);
             _context.SaveChanges();
         }
-
-        public EventTypeDto UpdateEventType(int id, [FromBody] EventTypeDto updateEventType)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
