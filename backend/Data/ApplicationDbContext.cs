@@ -1,5 +1,4 @@
-﻿using backend.Models;
-using IdentityServer4.EntityFramework.Options;
+﻿using IdentityServer4.EntityFramework.Options;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -20,8 +19,8 @@ namespace backend.Data
         { }
 
         public DbSet<Event> Events { get; set; } // reference to the Database - list that represents a table of events in the database
-        public DbSet<User> Users { get; set; } // reference to the Database - list that represents a table of users in the database
         public DbSet<Report> Reports { get; set; } // reference to the Database - list that represents a table of reports in the database
         public DbSet<EventType> EventTypes { get; set; } // reference to the Database - list that represents a table of reports in the database
+        
     }
 }

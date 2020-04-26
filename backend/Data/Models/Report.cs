@@ -14,9 +14,19 @@ namespace backend.Data.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+
+        [ForeignKey("EventTypeId")]
+        public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
+
+        [ForeignKey("SeverityLevelTypeId")]
+        public int SeverityLevelTypeId { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }
+
+        [ForeignKey("LocationId")]
+        public int LocationId { get; set; }
         public Location Location { get; set; }
+
         public DateTime Date { get; set; }
         public string CarNumber { get; set; }
         /// <summary>
