@@ -273,9 +273,6 @@ namespace backend.Data.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EventId")
-                        .HasColumnType("int");
-
                     b.Property<string>("EventType")
                         .HasColumnType("nvarchar(max)");
 
@@ -295,8 +292,6 @@ namespace backend.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("EventId");
 
                     b.ToTable("Reports");
                 });
@@ -433,13 +428,6 @@ namespace backend.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("backend.Data.Models.Report", b =>
-                {
-                    b.HasOne("backend.Data.Models.Event", null)
-                        .WithMany("Reports")
-                        .HasForeignKey("EventId");
                 });
 #pragma warning restore 612, 618
         }
