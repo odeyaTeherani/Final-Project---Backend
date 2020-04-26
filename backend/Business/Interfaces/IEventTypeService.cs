@@ -9,10 +9,10 @@ namespace backend.Business.Interfaces
 {
     public interface IEventTypeService
     {
-        List<EventTypeDto> GetAll();
-        EventTypeDto GetById(int id);
-        EventTypeDto AddNewEventType([FromBody] EventTypeDto newEventType);
-        EventTypeDto UpdateEventType(int id, [FromBody] EventTypeDto updateEventType);
-        void Delete(int id);
+        Task<List<EventTypeDto>> GetAllAsync();
+        Task<EventTypeDto> GetByIdAsync(int id);
+        Task<EventTypeDto> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType);
+        Task<EventTypeDto> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType);
+        void DeleteAsync(int id);
     }
 }

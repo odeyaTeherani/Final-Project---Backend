@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data;
 using backend.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
 {
@@ -21,30 +23,30 @@ namespace backend.Business.Services
         }
 
 
-        public List<EventDto> GetAll()
+        public async Task<List<EventDto>> GetAllAsync()
         {
-            var all = _context.Events.ToList();
+            var all = await _context.Events.ToListAsync();
             return _mapper.Map<List<EventDto>>(all);
         }
 
-        public EventDto GetById(int id)
+        public async Task<EventDto> GetByIdAsync(int id)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id);
+            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
             return _mapper.Map<EventDto>(result);
         }
 
-        public EventDto AddNewEvent(EventDto newEvent)
+        public async Task<EventDto> AddNewEventAsync(EventDto newEvent)
         {
             var mapperEvent = _mapper.Map<Event>(newEvent);
-            _context.Events.Add(mapperEvent);
-            _context.SaveChanges();
+            await _context.Events.AddAsync(mapperEvent);
+            await _context.SaveChangesAsync();
             return _mapper.Map<EventDto>(mapperEvent);
         }
 
-        public EventDto UpdateEvent(int id, EventDto updateEvent)
+        public async Task<EventDto> UpdateEventAsync(int id, EventDto updateEvent)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id);
+            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) return null;
 
             result.Date = updateEvent.Date;
@@ -55,16 +57,16 @@ namespace backend.Business.Services
             result.Date = updateEvent.Date;
             result.SeverityLevelType = updateEvent.SeverityLevelType;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return _mapper.Map<EventDto>(result);
         }
 
-        public void Delete(int id)
+        public async void DeleteAsync(int id)
         {
-            var result = _context.Events.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
+            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
             if (result == null) throw new Exception($"not found id {id}");
             _context.Events.Remove(result);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

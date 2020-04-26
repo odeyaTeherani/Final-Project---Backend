@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -20,17 +21,17 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType
         [HttpGet]
-        public List<EventTypeDto> Get()
+        public async Task<List<EventTypeDto>> GetAsync()
         {
-            return _eventTypeService.GetAll();
+            return await _eventTypeService.GetAllAsync();
         }
 
 
         // https://localhost:44341/eventType/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var result = _eventTypeService.GetById(id);
+            var result = await _eventTypeService.GetByIdAsync(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
@@ -38,22 +39,22 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType
         [HttpPost]
-        public IActionResult AddNewEventType([FromBody] EventTypeDto newEventType)
+        public async Task<IActionResult> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
         {
             if (newEventType == null) return BadRequest();
-            var result = _eventTypeService.AddNewEventType(newEventType);
-            return CreatedAtAction("GetById", new { id = result.Id }, result);
+            var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
+            return CreatedAtAction("GetByIdAsync", new { id = result.Id }, result);
         }
 
 
         // One of the parameters are empty
         // https://localhost:44341/eventType/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateEventType(int id, [FromBody] EventTypeDto updateEventType)
+        public async Task<IActionResult> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType)
         {
             if (updateEventType == null) return BadRequest();
 
-            var result = _eventTypeService.UpdateEventType(id, updateEventType);
+            var result = await _eventTypeService.UpdateEventTypeAsync(id, updateEventType);
             if (result == null) return NotFound();
             return NoContent();
         }
@@ -61,11 +62,11 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteAsync(int id)
         {
             try
             {
-                _eventTypeService.Delete(id);
+                _eventTypeService.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception e)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -19,49 +20,49 @@ namespace backend.Controllers
 
         // https://localhost:44341/event
         [HttpGet]
-        public List<EventDto> Get()
+        public async Task<List<EventDto>> GetAsync()
         {
-            return _eventService.GetAll();
+            return await _eventService.GetAllAsync();
         }
 
         // https://localhost:44341/event/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var result = _eventService.GetById(id);
+            var result = await _eventService.GetByIdAsync(id);
             if (result == null) return NotFound();
             return Ok(result);
         }
 
         // https://localhost:44341/event
         [HttpPost]
-        public IActionResult AddNewEvent([FromBody] EventDto newEvent)
+        public async Task<IActionResult> AddNewEventAsync([FromBody] EventDto newEvent)
         {
             if (newEvent == null) return BadRequest();
-            var result = _eventService.AddNewEvent(newEvent);
-            return CreatedAtAction("GetById", new {id = newEvent.Id}, newEvent);
+            var result = await _eventService.AddNewEventAsync(newEvent);
+            return CreatedAtAction("GetByIdAsync", new {id = newEvent.Id}, newEvent);
 
         }
 
         // One of the parameters are empty
         // https://localhost:44341/event/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateEvent(int id, [FromBody] EventDto updateEvent)
+        public async Task<IActionResult> UpdateEventAsync(int id, [FromBody] EventDto updateEvent)
         {
             if (updateEvent == null) return BadRequest();
 
-            var result = _eventService.UpdateEvent(id, updateEvent);
+            var result = await _eventService.UpdateEventAsync(id, updateEvent);
             if (result == null) return NotFound();
             return NoContent();
         }
 
         // https://localhost:44341/event/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteAsync(int id)
         {
             try
             {
-                _eventService.Delete(id);
+                _eventService.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception e)
