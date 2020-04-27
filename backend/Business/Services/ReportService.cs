@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
+using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 
@@ -30,7 +32,11 @@ namespace backend.Business.Services
         public ReportDto GetById(int id)
         {
             var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didn't find return null
-            if (result == null) return null;
+            if (result == null)
+            {
+                throw new CustomException($"Report whit id {id} not found",HttpStatusCode.NotFound );
+            }
+
             return _mapper.Map<ReportDto>(result);
         }
 

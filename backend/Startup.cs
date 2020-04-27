@@ -41,6 +41,7 @@ namespace backend
             
             // DI Settings
             services.AddTransient<IReportService, ReportService>();
+            services.AddTransient<IEventService, EventService>();
 
             // Mapping Settings
             var mappingConfig = services.InitMappings();
@@ -70,14 +71,15 @@ namespace backend
         {
             if (env.IsDevelopment())  // if we are in development environment
             {
-                app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
+                app.UseExceptionHandler("/error-local-development");
+                //app.UseDeveloperExceptionPage();
+                //app.UseDatabaseErrorPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                //app.UseHsts();
             }
 
             app.UseHttpsRedirection();
