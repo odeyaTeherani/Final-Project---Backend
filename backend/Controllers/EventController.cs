@@ -15,7 +15,7 @@ namespace backend.Controllers
 
         public EventController(IEventService eventService)
         {
-            _eventService = eventService; ;
+            _eventService = eventService;
         }
 
         // https://localhost:44341/event
