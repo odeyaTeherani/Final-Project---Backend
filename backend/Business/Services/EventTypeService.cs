@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using System.Net;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
+using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace backend.Business.Services
         public EventTypeDto GetById(int id)
         {
             var result = _context.EventTypes.SingleOrDefault(e => e.Id == id);
-            if (result == null) return null;
+            if (result == null) throw new CustomException($"EventType whit id {id} not found", HttpStatusCode.NotFound);
             return _mapper.Map<EventTypeDto>(result);
         }
 
@@ -46,7 +47,7 @@ namespace backend.Business.Services
         public EventTypeDto UpdateEventType(int id, [FromBody] EventTypeDto updateEventType)
         {
             var result = _context.EventTypes.SingleOrDefault(e => e.Id == id);
-            if (result == null) return null;
+            if (result == null) throw new CustomException($"EventType whit id {id} is empty", HttpStatusCode.BadRequest);
 
             result.Type = updateEventType.Type;
 
@@ -57,7 +58,7 @@ namespace backend.Business.Services
         public void Delete(int id)
         {
             var result = _context.EventTypes.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if (result == null) throw new Exception($"not found id {id}");
+            if (result == null) throw new CustomException($"EventType whit id {id} Is Not Exists", HttpStatusCode.BadRequest);
             _context.EventTypes.Remove(result);
             _context.SaveChanges();
         }

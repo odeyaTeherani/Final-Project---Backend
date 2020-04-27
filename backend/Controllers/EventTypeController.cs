@@ -31,7 +31,7 @@ namespace backend.Controllers
         public IActionResult GetById(int id)
         {
             var result = _eventTypeService.GetById(id);
-            if (result == null) return NotFound();
+            //if (result == null) return NotFound();
             return Ok(result);
         }
 
@@ -40,7 +40,7 @@ namespace backend.Controllers
         [HttpPost]
         public IActionResult AddNewEventType([FromBody] EventTypeDto newEventType)
         {
-            if (newEventType == null) return BadRequest();
+            //if (newEventType == null) return BadRequest();
             var result = _eventTypeService.AddNewEventType(newEventType);
             return CreatedAtAction("GetById", new { id = result.Id }, result);
         }
@@ -51,7 +51,7 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public IActionResult UpdateEventType(int id, [FromBody] EventTypeDto updateEventType)
         {
-            if (updateEventType == null) return BadRequest();
+            //if (updateEventType == null) return BadRequest();
 
             var result = _eventTypeService.UpdateEventType(id, updateEventType);
             if (result == null) return NotFound();
@@ -63,16 +63,8 @@ namespace backend.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            try
-            {
-                _eventTypeService.Delete(id);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return NotFound(e.Message);
-            }
-
+            _eventTypeService.Delete(id);
+            return Ok();
         }
     }
 }

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace backend.Business.Services
@@ -23,15 +25,15 @@ namespace backend.Business.Services
             _mapper = mapper;
         }
 
-        public List<ReportDto> GetAll()
+        public async Task<List<ReportDto>> GetAllAsync()
         {
-            var all = _context.Reports.ToList();
+            var all = await _context.Reports.ToListAsync();
             return _mapper.Map<List<ReportDto>>(all);
         }
 
-        public ReportDto GetById(int id)
+        public async Task<ReportDto> GetByIdAsync(int id)
         {
-            var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
             if (result == null)
             {
                 throw new CustomException($"Report whit id {id} not found",HttpStatusCode.NotFound );
@@ -40,18 +42,18 @@ namespace backend.Business.Services
             return _mapper.Map<ReportDto>(result);
         }
 
-        public ReportDto AddNewReport(ReportDto newReport)
+        public async Task<ReportDto> AddNewReportAsync(ReportDto newReport)
         {
             var mapperReport = _mapper.Map<Report>(newReport);
-            _context.Reports.Add(mapperReport);
-            _context.SaveChanges();
+            await _context.Reports.AddAsync(mapperReport);
+            await _context.SaveChangesAsync();
             return _mapper.Map<ReportDto>(mapperReport);
         }
 
-        public ReportDto UpdateReport(int id, ReportDto updateReport)
+        public async Task<ReportDto> UpdateReportAsync(int id, ReportDto updateReport)
         {
-            var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if (result == null) return null;
+            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
+            if (result == null) throw new CustomException($"The Report Whit Id {id} is empty", HttpStatusCode.BadRequest);
 
             result.CarNumber = updateReport.CarNumber;
             result.Date = updateReport.Date;
@@ -62,16 +64,16 @@ namespace backend.Business.Services
             result.Casualties = updateReport.Casualties;
             result.SeverityLevelType = updateReport.SeverityLevelType;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return _mapper.Map<ReportDto>(result); ;
         }
 
-        public void Delete(int id)
+        public async void DeleteAsync(int id)
         {
-            var result = _context.Reports.SingleOrDefault(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if(result == null) throw new Exception($"not found id {id}");
+            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
+            if(result == null) throw new CustomException($"The Report Whit Id {id} Is Not Exists", HttpStatusCode.BadRequest);
             _context.Reports.Remove(result);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
     }
 }

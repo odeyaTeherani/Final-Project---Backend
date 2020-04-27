@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
@@ -22,17 +23,17 @@ namespace backend.Controllers
 
         // https://localhost:44341/report 
         [HttpGet]
-        public List<ReportDto> Get()
+        public async Task<List<ReportDto>> GetAsync()
         {
-            return _reportService.GetAll();
+            return await _reportService.GetAllAsync();
         }
 
 
         // https://localhost:44341/report/{id}
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetByIdAsync(int id)
         {
-            var result = _reportService.GetById(id);
+            var result = await _reportService.GetByIdAsync(id);
             //if (result == null) return NotFound();
             return Ok(result);
         }
@@ -40,22 +41,22 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public IActionResult AddNewReport([FromBody] ReportDto newReport)
+        public IActionResult AddNewReportAsync([FromBody] ReportDto newReport)
         {
-            if (newReport == null) return BadRequest();
-            var result = _reportService.AddNewReport(newReport);
-            return CreatedAtAction("GetById", new { id = result.Id }, result);
+            //if (newReport == null) return BadRequest();
+            var result = _reportService.AddNewReportAsync(newReport);
+            return CreatedAtAction("GetByIdAsync", new { id = result.Id }, result);
         }
 
 
         // One of the parameters are empty
         // https://localhost:44341/report/{id}
         [HttpPut("{id}")]
-        public IActionResult UpdateReport(int id, [FromBody] ReportDto updateReport)
+        public IActionResult UpdateReportAsync(int id, [FromBody] ReportDto updateReport)
         {
-            if (updateReport == null) return BadRequest();
+            //if (updateReport == null) return BadRequest();
 
-            var result = _reportService.UpdateReport(id, updateReport);
+            var result = _reportService.UpdateReportAsync(id, updateReport);
             if (result == null) return NotFound();
             return NoContent();
         }
@@ -63,18 +64,10 @@ namespace backend.Controllers
 
         // https://localhost:44341/report/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public IActionResult DeleteAsync(int id)
         {
-            try
-            {
-                _reportService.Delete(id);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return NotFound(e.Message);
-            }
-
+            _reportService.DeleteAsync(id);
+            return Ok();
         }
     }
 }

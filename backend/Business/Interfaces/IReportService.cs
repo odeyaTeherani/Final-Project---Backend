@@ -10,11 +10,11 @@ namespace backend.Business.Interfaces
 {
     public interface IReportService
     {
-        List<ReportDto> GetAll();
-        ReportDto GetById(int id);
-        ReportDto AddNewReport([FromBody] ReportDto newReport);
-        ReportDto UpdateReport(int id, [FromBody] ReportDto updateReport);
-        void Delete(int id);
+        Task<List<ReportDto>> GetAllAsync();
+        Task<ReportDto> GetByIdAsync(int id);
+        Task<ReportDto> AddNewReportAsync([FromBody] ReportDto newReport);
+        Task<ReportDto> UpdateReportAsync(int id, [FromBody] ReportDto updateReport);
+        void DeleteAsync(int id);
 
     }
 }
