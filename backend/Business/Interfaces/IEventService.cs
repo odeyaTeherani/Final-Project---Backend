@@ -9,10 +9,10 @@ namespace backend.Business.Interfaces
 {
     public interface IEventService
     {
-        List<EventDto> GetAll();
-        EventDto GetById(int id);
-        EventDto AddNewEvent([FromBody] EventDto newEvent);
-        EventDto UpdateEvent(int id, [FromBody] EventDto updateEvent);
-        void Delete(int id);
+        Task<List<EventDto>> GetAllAsync();
+        Task<EventDto> GetByIdAsync(int id);
+        Task<EventDto> AddNewEventAsync([FromBody] EventDto newEvent);
+        Task<EventDto> UpdateEventAsync(int id, EventDto updateEvent);
+        void DeleteAsync(int id);
     }
 }
