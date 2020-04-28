@@ -33,7 +33,7 @@ namespace backend.Business.Services
 
         public async Task<EventTypeDto> GetByIdAsync(int id)
         {
-            var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id)
+            var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"EventType whit id {id} not found", HttpStatusCode.NotFound);
             return _mapper.Map<EventTypeDto>(result);
         }
