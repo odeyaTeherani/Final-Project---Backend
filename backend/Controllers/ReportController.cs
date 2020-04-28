@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
@@ -19,7 +20,7 @@ namespace backend.Controllers
         }
         
 
-        // https://localhost:44341/report
+        // https://localhost:44341/report 
         [HttpGet]
         public List<ReportDto> Get()
         {
@@ -32,7 +33,7 @@ namespace backend.Controllers
         public IActionResult GetById(int id)
         {
             var result = _reportService.GetById(id);
-            if (result == null) return NotFound();
+            //if (result == null) return NotFound();
             return Ok(result);
         }
 

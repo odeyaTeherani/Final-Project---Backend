@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
+using backend.Controllers;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -43,7 +44,7 @@ namespace backend.Business.Services
         public async Task<UserInformationDto> RegisterAsync(UserInformationDto model)
         {
             var roleExistResult = _roleManager.RoleExistsAsync(model.Role); // check if the role exist
-            if (!roleExistResult.Result) throw new Exception("Role doesn't exist");// TODO -  add { throw new CustomException("404"); _logger }
+            if (!roleExistResult.Result) throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
             {
@@ -77,14 +78,12 @@ namespace backend.Business.Services
             // signInManager if from the identity library
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false); // send the email and the password and confirm the password - check if the user connect
 
-            if (!result.Succeeded)
-                throw new Exception("User or Password are incorrect"); // TODO - change to CustomException
+            if (!result.Succeeded) throw new CustomException($"User or Password are incorrect"); // HttpStatusCode?
             var user = _userManager.Users.SingleOrDefault(r => r.UserName == model.Email);
             var roles = await _userManager.GetRolesAsync(user);
 
-            // TODO
-            //if (roles.Count <= 0)
-            //    throw new CustomExeption("User not assigned to any roles there for he cannot be logged in");
+            if (roles.Count <= 0)
+                throw new CustomException("User not assigned to any roles there for he cannot be logged in");
 
             var token = GenerateJwtToken(model.Email, user, roles); // Creating user token
             return new { token, roles };
@@ -94,25 +93,26 @@ namespace backend.Business.Services
         //change password - the user already connect
         public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordDto model)
         {
-            // TODO - what to send?
             var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
+            if (user == null)
+                throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
+
             var result =
                 await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
             if (!result.Succeeded)
             {
                 // var errors = result.Errors.Select(x => x.Description);
-                throw new Exception("User or Password are incorrect");  // TODO - throw new CustomException("Change Password failed");
+                throw new CustomException("Change Password failed");
             }
             return result;
         }
 
         public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model)
         {
-            //TODO - what to send
             // Get the existing student from the db
             var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
             if (user == null)
-                throw new Exception($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'."); // TODO
+                throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
 
             // Update it with the values from the view model
             user.FirstName = model.FirstName;
@@ -124,17 +124,17 @@ namespace backend.Business.Services
             await _userManager.RemoveFromRolesAsync(user, roles);
             await _userManager.AddToRoleAsync(user, model.Role);
 
-
-                // Apply the changes if any to the db
+            // Apply the changes if any to the db
             IdentityResult result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                throw new Exception("Update didn't succeeded"); // TODO - throw new CustomException
+                throw new CustomException($"Unable to update.");
+            
             return result;
         }
 
 
         // Generate token 
-        private async Task<object> GenerateJwtToken(string email, ApplicationUser user, IList<string> userRole)
+        private object GenerateJwtToken(string email, ApplicationUser user, IList<string> userRole)
         {
             // remove unnecessary claims 
             // Information that we put on the basic token
