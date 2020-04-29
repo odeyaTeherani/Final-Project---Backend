@@ -70,7 +70,7 @@ namespace backend.Business.Services
 
         public async void DeleteAsync(int id)
         {
-            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
+            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
             if(result == null) throw new CustomException($"The Report Whit Id {id} Is Not Exists", HttpStatusCode.BadRequest);
             _context.Reports.Remove(result);
             await _context.SaveChangesAsync();
