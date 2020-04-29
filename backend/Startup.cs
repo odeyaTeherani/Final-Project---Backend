@@ -1,6 +1,9 @@
 //program.cs call to Startup
 //here we define everything we need for the project
 
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -14,10 +17,12 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
-using backend.Models;
+using backend.Data.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace backend
 {
@@ -38,11 +43,12 @@ namespace backend
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("EventsDatabase")));
-            
-            // DI Settings
+     
+            // DI (Dependency Injection) framework Settings
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IEventService, EventService>();
             services.AddTransient<IEventTypeService, EventTypeService>();
+            services.AddTransient<IAccountService, AccountService>();
 
             // Mapping Settings
             var mappingConfig = services.InitMappings();
@@ -50,14 +56,35 @@ namespace backend
             services.AddSingleton(mapper);
 
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+                    options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //===== Identity User Configurations ====//
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    // User settings
+                    options.User.RequireUniqueEmail = true; // Make sure the email is unique for each account
+
+                    // Password settings
+                    options.Password.RequireDigit = false; // Do charge numbers
+                    options.Password.RequiredLength = 6; // minimum length
+                    options.Password.RequiredUniqueChars = 0; // how much special characters require
+                    options.Password.RequireLowercase = false; // Do required lowercase
+                    options.Password.RequireNonAlphanumeric = false; 
+                    options.Password.RequireUppercase = false; // Do required uppercase
+
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
 
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
             services.AddControllersWithViews();
             services.AddRazorPages();
             // In production, the Angular files will be served from this directory
@@ -65,6 +92,32 @@ namespace backend
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            // ===== Add Jwt Authentication ======== //
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+                    cfg.TokenValidationParameters = new TokenValidationParameters // don't required
+                    {
+                        ValidIssuer = "Add token issuer name or delete", // token issuer name
+                        ValidAudience = "Add to whom audience the token relevant to or delete.", 
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])), // Symmetric key - Extra security on the token
+                        ClockSkew = TimeSpan.Zero,
+                        RoleClaimType = "roles", // name of roles claim 
+                        NameClaimType = "name"   // use it if you add cliam of the username if not DELETE
+                    };
+                });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

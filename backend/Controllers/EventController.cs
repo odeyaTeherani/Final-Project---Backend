@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -30,7 +30,6 @@ namespace backend.Controllers
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             var result = await _eventService.GetByIdAsync(id);
-            if (result == null) return NotFound();
             return Ok(result);
         }
 
@@ -38,9 +37,9 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewEventAsync([FromBody] EventDto newEvent)
         {
-            if (newEvent == null) return BadRequest();
+            if (newEvent == null) throw new CustomException($"The new event is empty", HttpStatusCode.BadRequest);
             var result = await _eventService.AddNewEventAsync(newEvent);
-            return CreatedAtAction("GetByIdAsync", new {id = newEvent.Id}, newEvent);
+            return CreatedAtAction("GetByIdAsync", new { id = newEvent.Id }, newEvent);
 
         }
 
@@ -49,26 +48,17 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEventAsync(int id, [FromBody] EventDto updateEvent)
         {
-            if (updateEvent == null) return BadRequest();
+            if (updateEvent == null) throw new CustomException($"The event is empty", HttpStatusCode.BadRequest);
 
             var result = await _eventService.UpdateEventAsync(id, updateEvent);
-            if (result == null) return NotFound();
             return NoContent();
         }
 
         // https://localhost:44341/event/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteAsync(int id)
+        public  void DeleteAsync(int id)
         {
-            try
-            {
-                _eventService.DeleteAsync(id);
-                return Ok();
-            }
-            catch (Exception e)
-            {
-                return NotFound(e.Message);
-            }
+             _eventService.DeleteAsync(id);
         }
     }
 }
