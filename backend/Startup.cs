@@ -42,6 +42,7 @@ namespace backend
             // DI Settings
             services.AddTransient<IReportService, ReportService>();
             services.AddTransient<IEventService, EventService>();
+            services.AddTransient<IEventTypeService, EventTypeService>();
 
             // Mapping Settings
             var mappingConfig = services.InitMappings();
