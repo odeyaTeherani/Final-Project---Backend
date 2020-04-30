@@ -30,7 +30,7 @@ namespace backend.Business.Services
         public async Task<EventDto> GetByIdAsync(int id)
         {
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
-            if (result == null) throw new CustomException($"Report whit id {id} not found", HttpStatusCode.NotFound);
+            if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
             return _mapper.Map<EventDto>(result);
         }
 
@@ -45,7 +45,7 @@ namespace backend.Business.Services
         public async Task<EventDto> UpdateEventAsync(int id, EventDto updateEvent)
         {
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
-            if (result == null) throw new CustomException($"Report whit id {id} not found", HttpStatusCode.NotFound);
+            if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
 
             result.Date = updateEvent.Date;
             result.EventType = updateEvent.EventType;
@@ -61,8 +61,8 @@ namespace backend.Business.Services
 
         public async void DeleteAsync(int id)
         {
-            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if (result == null) throw new CustomException($"Report whit id {id} not found", HttpStatusCode.NotFound);
+            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
             _context.Events.Remove(result);
             await _context.SaveChangesAsync();
         }

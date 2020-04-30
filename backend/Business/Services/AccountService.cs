@@ -76,16 +76,16 @@ namespace backend.Business.Services
         public async Task<dynamic> LoginAsync(LoginDto model)
         {
             // signInManager if from the identity library
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false); // send the email and the password and confirm the password - check if the user connect
+            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false); // send the email and the password and confirm the password - check if the user connect
 
             if (!result.Succeeded) throw new CustomException($"User or Password are incorrect"); // HttpStatusCode?
-            var user = _userManager.Users.SingleOrDefault(r => r.UserName == model.Email);
+            var user = _userManager.Users.SingleOrDefault(r => r.UserName == model.Username);
             var roles = await _userManager.GetRolesAsync(user);
 
             if (roles.Count <= 0)
                 throw new CustomException("User not assigned to any roles there for he cannot be logged in");
 
-            var token = GenerateJwtToken(model.Email, user, roles); // Creating user token
+            var token = GenerateJwtToken(user, roles); // Creating user token
             return new { token, roles };
         }
 
@@ -134,16 +134,15 @@ namespace backend.Business.Services
 
 
         // Generate token 
-        private object GenerateJwtToken(string email, ApplicationUser user, IList<string> userRole)
+        private object GenerateJwtToken(ApplicationUser user, IList<string> userRole)
         {
             // remove unnecessary claims 
             // Information that we put on the basic token
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim("name", user.UserName),
                 new Claim("email",user.Email)
             };
 
@@ -164,6 +163,17 @@ namespace backend.Business.Services
             return new JwtSecurityTokenHandler().WriteToken(token); // Creating the token
         }
 
+        public void SeedRoles()
+        {
+            if (!_roleManager.RoleExistsAsync("admin").Result)
+            {
+                _roleManager.CreateAsync(new IdentityRole("admin")).Wait();
+            }            
+            if (!_roleManager.RoleExistsAsync("user").Result)
+            {
+                _roleManager.CreateAsync(new IdentityRole("user")).Wait();
+            }
+        }
     }
 }
 

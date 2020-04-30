@@ -39,7 +39,7 @@ namespace backend.Controllers
         {
             if (newEvent == null) throw new CustomException($"The new event is empty", HttpStatusCode.BadRequest);
             var result = await _eventService.AddNewEventAsync(newEvent);
-            return CreatedAtAction("GetByIdAsync", new { id = newEvent.Id }, newEvent);
+            return CreatedAtAction("GetByIdAsync", new { id = newEvent.Id }, result);
 
         }
 
@@ -49,16 +49,16 @@ namespace backend.Controllers
         public async Task<IActionResult> UpdateEventAsync(int id, [FromBody] EventDto updateEvent)
         {
             if (updateEvent == null) throw new CustomException($"The event is empty", HttpStatusCode.BadRequest);
-
             var result = await _eventService.UpdateEventAsync(id, updateEvent);
             return NoContent();
         }
 
         // https://localhost:44341/event/{id}
         [HttpDelete("{id}")]
-        public  void DeleteAsync(int id)
+        public IActionResult DeleteAsync(int id)
         {
              _eventService.DeleteAsync(id);
+             return Ok();
         }
     }
 }

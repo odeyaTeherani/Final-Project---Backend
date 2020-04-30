@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using backend.Business.Dto;
-using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace backend.Business.Interfaces
@@ -12,5 +11,6 @@ namespace backend.Business.Interfaces
         Task<IdentityResult> ChangePasswordAsync(ChangePasswordDto model);
         Task<IdentityResult> UpdateUserAsync(UserInformationDto model);
 
+        void SeedRoles();
     }
 }

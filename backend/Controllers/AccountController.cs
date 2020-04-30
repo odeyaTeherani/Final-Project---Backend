@@ -1,23 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Logging;
-using Microsoft.IdentityModel.Tokens;
 
 namespace backend.Controllers
 {
-    [Route("[controller")]
+    [Route("[controller]")]
     [ApiController]
     public class AccountController : ControllerBase
     {
@@ -54,7 +45,7 @@ namespace backend.Controllers
 
 
         //update user - TODO see in internet -  https://stackoverflow.com/questions/39545037/updating-user-by-usermanager-update-in-asp-net-identity-2
-        [HttpPost("updateUser")]
+        [HttpPut("updateUser")]
         private async Task<IActionResult> UpdateUserAsync([FromBody] UserInformationDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -63,7 +54,7 @@ namespace backend.Controllers
 
 
         //change password - the user already connect
-        [HttpPost("changePassword")]
+        [HttpPut("changePassword")]
         private async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -72,7 +63,7 @@ namespace backend.Controllers
 
 
         //reset password - forget Password - TODO - nice to have
-        /*[HttpPost("resetPassword")]
+        /*[HttpPut("resetPassword")]
         [AllowAnonymous]
         private async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resertPasswordModel)
         {

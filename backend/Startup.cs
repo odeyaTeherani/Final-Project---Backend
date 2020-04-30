@@ -4,16 +4,12 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Business.Services;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
@@ -56,9 +52,9 @@ namespace backend
             services.AddSingleton(mapper);
 
 
-            services.AddDefaultIdentity<ApplicationUser>(options =>
-                    options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            // services.AddDefaultIdentity<ApplicationUser>(options =>
+            //         options.SignIn.RequireConfirmedAccount = true)
+            //     .AddEntityFrameworkStores<ApplicationDbContext>();
 
             //===== Identity User Configurations ====//
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -78,15 +74,14 @@ namespace backend
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            // services.AddIdentityServer()
+            //     .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            // services.AddAuthentication()
+            //     .AddIdentityServerJwt();
 
-            services.AddAuthentication()
-                .AddIdentityServerJwt();
-
-            services.AddControllersWithViews();
-            services.AddRazorPages();
+            services.AddControllersWithViews(); // Angular
+            // services.AddRazorPages();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -109,32 +104,21 @@ namespace backend
                     cfg.SaveToken = true;
                     cfg.TokenValidationParameters = new TokenValidationParameters // don't required
                     {
-                        ValidIssuer = "Add token issuer name or delete", // token issuer name
-                        ValidAudience = "Add to whom audience the token relevant to or delete.", 
+                        ValidIssuer = Configuration["JwtIssuer"], // token issuer name
+                        ValidAudience = Configuration["JwtIssuer"], 
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JwtKey"])), // Symmetric key - Extra security on the token
                         ClockSkew = TimeSpan.Zero,
                         RoleClaimType = "roles", // name of roles claim 
-                        NameClaimType = "name"   // use it if you add cliam of the username if not DELETE
                     };
                 });
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IAccountService accountService)
         {
-            if (env.IsDevelopment())  // if we are in development environment
-            {
-                app.UseExceptionHandler("/error-local-development");
-                //app.UseDeveloperExceptionPage();
-                //app.UseDatabaseErrorPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                //app.UseHsts();
-            }
+            accountService.SeedRoles();
+            app.UseExceptionHandler(env.IsDevelopment() ? "/error-local-development" : "/error");
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
@@ -144,16 +128,18 @@ namespace backend
             }
 
             app.UseRouting();
-
             app.UseAuthentication();
-            app.UseIdentityServer();
+            // app.UseIdentityServer();
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapRazorPages();
+                // endpoints.MapControllerRoute(
+                //     name: "default",
+                //     pattern: "{controller}/{action=Index}/{id?}");a
+                // endpoints.MapRazorPages(); 
+                
+                endpoints.MapControllers();
+                // endpoints.MapRazorPages();
             });
 
             app.UseSpa(spa =>

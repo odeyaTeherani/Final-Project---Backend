@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -32,7 +32,6 @@ namespace backend.Controllers
         public async Task<IActionResult> GetByIdAsync(int id)
         {
             var result = await _eventTypeService.GetByIdAsync(id);
-            if (result == null) return NotFound();
             return Ok(result);
         }
 
@@ -41,7 +40,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
         {
-            if (newEventType == null) return BadRequest();
+            if (newEventType == null) throw new CustomException($"The new event type is empty", HttpStatusCode.BadRequest);
             var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
             return CreatedAtAction("GetByIdAsync", new {id = result.Id}, result);
         }
@@ -52,10 +51,8 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType)
         {
-            //if (updateEventType == null) return BadRequest();
-
+            if (updateEventType == null) throw new CustomException($"event type is empty", HttpStatusCode.BadRequest);
             var result = await _eventTypeService.UpdateEventTypeAsync(id, updateEventType);
-            if (result == null) return NotFound();
             return NoContent();
         }
 

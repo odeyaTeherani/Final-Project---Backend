@@ -1,7 +1,4 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -11,7 +8,6 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace backend.Business.Services
 {
@@ -35,11 +31,7 @@ namespace backend.Business.Services
         public async Task<ReportDto> GetByIdAsync(int id)
         {
             var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
-            if (result == null)
-            {
-                throw new CustomException($"Report whit id {id} not found",HttpStatusCode.NotFound );
-            }
-
+            if (result == null) throw new CustomException($"Report whit id {id} not found",HttpStatusCode.NotFound );
             return _mapper.Map<ReportDto>(result);
         }
 
@@ -53,8 +45,8 @@ namespace backend.Business.Services
 
         public async Task<ReportDto> UpdateReportAsync(int id, ReportDto updateReport)
         {
-            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if (result == null) throw new CustomException($"The Report Whit Id {id} is empty", HttpStatusCode.BadRequest);
+            var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
+            if (result == null) throw new CustomException($"Report whit id {id} is not found", HttpStatusCode.NotFound);
 
             result.CarNumber = updateReport.CarNumber;
             result.Date = updateReport.Date;
@@ -72,7 +64,7 @@ namespace backend.Business.Services
         public async void DeleteAsync(int id)
         {
             var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
-            if(result == null) throw new CustomException($"The Report Whit Id {id} Is Not Exists", HttpStatusCode.BadRequest);
+            if(result == null) throw new CustomException($"Report whit id {id} is not found", HttpStatusCode.NotFound);
             _context.Reports.Remove(result);
             await _context.SaveChangesAsync();
         }

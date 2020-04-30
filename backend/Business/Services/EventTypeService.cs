@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net;
 using AutoMapper;
@@ -49,8 +47,8 @@ namespace backend.Business.Services
         public async Task<EventTypeDto> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType)
         {
             var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id);
-            if (result == null) throw new CustomException($"EventType whit id {id} is empty", HttpStatusCode.BadRequest);
-
+            if (result == null) throw new CustomException($"Event Type whit id {id} not found", HttpStatusCode.NotFound);
+            
             result.Type = updateEventType.Type;
 
             await _context.SaveChangesAsync();
@@ -60,7 +58,7 @@ namespace backend.Business.Services
         public async void DeleteAsync(int id)
         {
             var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
-            if (result == null) throw new CustomException($"EventType whit id {id} Is Not Exists", HttpStatusCode.BadRequest);
+            if (result == null) throw new CustomException($"Event Type whit id {id} not found", HttpStatusCode.NotFound);
             _context.EventTypes.Remove(result);
             await _context.SaveChangesAsync();
         }
