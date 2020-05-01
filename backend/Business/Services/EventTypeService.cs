@@ -36,7 +36,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventTypeDto>(result);
         }
 
-        public async Task<EventTypeDto> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
+        public async Task<EventTypeDto> AddNewEventTypeAsync(EventTypeDto newEventType)
         {
             var mapperEventType = _mapper.Map<EventType>(newEventType);
             await _context.EventTypes.AddAsync(mapperEventType);
@@ -44,7 +44,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventTypeDto>(mapperEventType);
         }
 
-        public async Task<EventTypeDto> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType)
+        public async Task<EventTypeDto> UpdateEventTypeAsync(int id, EventTypeDto updateEventType)
         {
             var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event Type whit id {id} not found", HttpStatusCode.NotFound);

@@ -40,7 +40,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
         {
-            if (newEventType == null) throw new CustomException($"The new event type is empty", HttpStatusCode.BadRequest);
+            if (newEventType == null) throw new CustomException($"The new event type is empty");
             var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
             return CreatedAtAction("GetByIdAsync", new {id = result.Id}, result);
         }
@@ -51,7 +51,7 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType)
         {
-            if (updateEventType == null) throw new CustomException($"event type is empty", HttpStatusCode.BadRequest);
+            if (updateEventType == null) throw new CustomException($"event type is empty");
             var result = await _eventTypeService.UpdateEventTypeAsync(id, updateEventType);
             return NoContent();
         }

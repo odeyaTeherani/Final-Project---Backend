@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto;
+using backend.Business.Helpers;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
@@ -15,21 +17,30 @@ namespace backend.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private QueryHelper<Event> _queryHelper;
+
         public EventService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _queryHelper = new QueryHelper<Event>(_context);
         }
 
+        /// <summary>
+        /// Get all events
+        /// </summary>
+        /// <returns>List of all events</returns>
         public async Task<List<EventDto>> GetAllAsync()
         {
-            var all = await _context.Events.ToListAsync();
+            var all = await GetEvent()
+                .ToListAsync();
             return _mapper.Map<List<EventDto>>(all);
         }
 
         public async Task<EventDto> GetByIdAsync(int id)
         {
-            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
+            var result = await GetEvent()
+                .SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
             return _mapper.Map<EventDto>(result);
         }
@@ -42,7 +53,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventDto>(mapperEvent);
         }
 
-        public async Task<EventDto> UpdateEventAsync(int id, EventDto updateEvent)
+        public async Task UpdateEventAsync(int id, EventDto updateEvent)
         {
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
@@ -54,9 +65,8 @@ namespace backend.Business.Services
             result.Reports = updateEvent.Reports;
             result.Date = updateEvent.Date;
             result.SeverityLevelType = updateEvent.SeverityLevelType;
-
             await _context.SaveChangesAsync();
-            return _mapper.Map<EventDto>(result);
+        
         }
 
         public async void DeleteAsync(int id)
@@ -65,6 +75,11 @@ namespace backend.Business.Services
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
             _context.Events.Remove(result);
             await _context.SaveChangesAsync();
+        }
+        
+        private IQueryable<Event> GetEvent()
+        {
+            return _queryHelper.GetAllIncluding(x => x.EventType, x => x.Images, x => x.Location);
         }
     }
 }

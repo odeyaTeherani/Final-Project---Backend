@@ -9,9 +9,8 @@ namespace backend.Business.Dto
 {
     public class EventDto
     {
-        [Key] // "EventId" is primary key (uniq)
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The "EventId" will be managed automatically
         public int Id { get; set; } //primary key
+        public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
         public List<Report> Reports { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }
