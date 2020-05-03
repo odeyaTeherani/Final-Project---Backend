@@ -14,8 +14,7 @@ namespace backend.Business.Dto
 {
     public class ReportDto
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         public int Id { get; set; }
         public EventType EventType { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }

@@ -43,7 +43,7 @@ namespace backend.Business.Services
             return _mapper.Map<ReportDto>(mapperReport);
         }
 
-        public async Task<ReportDto> UpdateReportAsync(int id, ReportDto updateReport)
+        public async Task UpdateReportAsync(int id, ReportDto updateReport)
         {
             var result = await _context.Reports.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
             if (result == null) throw new CustomException($"Report whit id {id} is not found", HttpStatusCode.NotFound);
@@ -56,9 +56,8 @@ namespace backend.Business.Services
             result.Note = updateReport.Note;
             result.Casualties = updateReport.Casualties;
             result.SeverityLevelType = updateReport.SeverityLevelType;
-
             await _context.SaveChangesAsync();
-            return _mapper.Map<ReportDto>(result); ;
+
         }
 
         public async void DeleteAsync(int id)

@@ -9,8 +9,8 @@ namespace backend.Business.Interfaces
     {
         Task<List<ReportDto>> GetAllAsync();
         Task<ReportDto> GetByIdAsync(int id);
-        Task<ReportDto> AddNewReportAsync([FromBody] ReportDto newReport);
-        Task<ReportDto> UpdateReportAsync(int id, [FromBody] ReportDto updateReport);
+        Task<ReportDto> AddNewReportAsync(ReportDto newReport);
+        Task UpdateReportAsync(int id, ReportDto updateReport);
         void DeleteAsync(int id);
 
     }

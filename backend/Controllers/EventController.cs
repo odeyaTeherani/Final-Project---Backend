@@ -22,12 +22,13 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<List<EventDto>> GetAsync()
         {
+            // consider to implement paging mechanism 
             return await _eventService.GetAllAsync();
         }
 
         // https://localhost:44341/event/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _eventService.GetByIdAsync(id);
             return Ok(result);
@@ -37,9 +38,9 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewEventAsync([FromBody] EventDto newEvent)
         {
-            if (newEvent == null) throw new CustomException($"The new event is empty", HttpStatusCode.BadRequest);
+            if (newEvent == null) throw new CustomException($"The new event is empty");
             var result = await _eventService.AddNewEventAsync(newEvent);
-            return CreatedAtAction("GetByIdAsync", new { id = newEvent.Id }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
 
         }
 
@@ -48,8 +49,8 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateEventAsync(int id, [FromBody] EventDto updateEvent)
         {
-            if (updateEvent == null) throw new CustomException($"The event is empty", HttpStatusCode.BadRequest);
-            var result = await _eventService.UpdateEventAsync(id, updateEvent);
+            if (updateEvent == null) throw new CustomException($"The event is empty");
+            await _eventService.UpdateEventAsync(id, updateEvent);
             return NoContent();
         }
 

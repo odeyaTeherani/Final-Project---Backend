@@ -27,6 +27,10 @@ namespace backend.Controllers
             return await _reportService.GetAllAsync();
         }
 
+        /// <summary>
+        ///  TODO: Delete -------> jest for Roles example 
+        /// </summary>
+        /// <returns></returns>
         [Authorize(Roles = "admin")]
         [HttpGet ("admin")]
         public async Task<List<ReportDto>> GetAsyncAdmin()
@@ -48,7 +52,7 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewReportAsync([FromBody] ReportDto newReport)
         { 
-            if (newReport == null) throw new CustomException($"The new report is empty", HttpStatusCode.BadRequest);
+            if (newReport == null) throw new CustomException($"The new report is empty");
             var result = await _reportService.AddNewReportAsync(newReport);
             return CreatedAtAction("GetByIdAsync", new { id = result.Id }, result);
         }
@@ -59,8 +63,8 @@ namespace backend.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReportAsync(int id, [FromBody] ReportDto updateReport)
         {
-            if (updateReport == null) throw new CustomException($"The report is empty", HttpStatusCode.BadRequest);
-            var result = await _reportService.UpdateReportAsync(id, updateReport);
+            if (updateReport == null) throw new CustomException($"The report is empty");
+            await _reportService.UpdateReportAsync(id, updateReport);
             return NoContent();
         }
 
