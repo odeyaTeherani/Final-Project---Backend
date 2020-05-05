@@ -25,11 +25,11 @@ namespace backend.Controllers
                     "This shouldn't be invoked in non-development environments.");
             }
 
-            var error = HttpContext.Features.Get<IExceptionHandlerFeature>().Error as CustomException;
+            var error = HttpContext.Features.Get<IExceptionHandlerFeature>().Error;
             if (error is CustomException ce)
             {
                 return Problem(
-                    statusCode: (int?)ce.Status ?? 500,
+                    statusCode: (int?)ce.Status,
                     detail: ce.StackTrace,
                     title: ce.Message);
             }

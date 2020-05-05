@@ -19,9 +19,12 @@ namespace backend.Business.Helpers
         public  IQueryable<T> GetAllIncluding(params Expression<Func<T, object>>[] includes)
         {
             var query = _context.Set<T>().AsNoTracking();
+            
+            
 
             query = includes.Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
 
+           
             return query;
         }
     }
