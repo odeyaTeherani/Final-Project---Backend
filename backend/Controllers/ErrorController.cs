@@ -11,6 +11,12 @@ namespace backend.Controllers
     [ApiController]
     public class ErrorController : ControllerBase
     {
+        /// <summary>
+        ///  Some Text
+        /// </summary>
+        /// <param name="webHostEnvironment"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         [Route("/error-local-development")]
         public IActionResult ErrorLocalDevelopment(
             [FromServices] IWebHostEnvironment webHostEnvironment)
