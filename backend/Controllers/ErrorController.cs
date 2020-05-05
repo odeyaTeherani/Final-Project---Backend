@@ -12,15 +12,13 @@ namespace backend.Controllers
     public class ErrorController : ControllerBase
     {
         /// <summary>
-        ///  Some Text
+        /// Create Error Object
+        /// Used for local errors - on development only
         /// </summary>
         /// <param name="webHostEnvironment"></param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <returns>Http call containing error</returns>
         [Route("/error-local-development")]
-        public IActionResult ErrorLocalDevelopment(
-            [FromServices] IWebHostEnvironment webHostEnvironment)
-        {
+        public IActionResult ErrorLocalDevelopment([FromServices] IWebHostEnvironment webHostEnvironment){
             if (webHostEnvironment.EnvironmentName != "Development")
             {
                 throw new InvalidOperationException(
