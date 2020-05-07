@@ -24,7 +24,7 @@ namespace backend.Data.Models
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
-        public int LocationId { get; set; }
+        public int? LocationId { get; set; }
         public Location Location { get; set; }
 
         public DateTime Date { get; set; }
