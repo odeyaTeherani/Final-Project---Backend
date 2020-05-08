@@ -36,9 +36,12 @@ namespace backend.Business.Dto
                     cfg.CreateMap<Report, GetReportDto>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
+                        .ForMember(x => x.EventType,
+                            opt => opt.Ignore())
                         .AfterMap((report, reportDto) =>
                         {
                             reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
+                            reportDto.EventType = report.EventType?.Type;
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();

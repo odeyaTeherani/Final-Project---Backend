@@ -15,7 +15,7 @@ namespace backend.Business.Dto.ReportDtoModels
         [JsonProperty("severityLevel")]
         public SeverityLevel SeverityLevelType { get; set; }
         // public Location Location { get; set; }
-        public DateTime Date { get; set; }
+    
         public string CarNumber { get; set; }
 
         public string Note { get; set; }

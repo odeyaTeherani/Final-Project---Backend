@@ -23,9 +23,6 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
-
-        [ForeignKey("SeverityLevelTypeId")]
-        public int SeverityLevelTypeId { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
