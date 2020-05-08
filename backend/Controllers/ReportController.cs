@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.ReportDtoModels;
 using backend.Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,8 +52,9 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public async Task<IActionResult> AddNewReport([FromBody] ReportDto newReport)
+        public async Task<IActionResult> AddNewReport([FromBody] AddReportDto newReport)
         {
+            var username = User.FindFirst("Sub");
             if (newReport == null) throw new CustomException($"The new report is empty");
             var result = await _reportService.AddNewReportAsync(newReport);
             return CreatedAtAction("GetById", new { id = result.Id }, result);

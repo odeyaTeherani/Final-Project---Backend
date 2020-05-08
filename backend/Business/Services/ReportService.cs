@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto;
+using backend.Business.Dto.ReportDtoModels;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
@@ -36,16 +37,13 @@ namespace backend.Business.Services
             return _mapper.Map<ReportDto>(result);
         }
 
-        public async Task<ReportDto> AddNewReportAsync(ReportDto newReport)
+        public async Task<GetReportDto> AddNewReportAsync(AddReportDto newReport)
         {
             var mapperReport = _mapper.Map<Report>(newReport);
-            // TODO:DELETE
-            mapperReport.EventType = null;
-            mapperReport.EventTypeId = newReport.EventType.Id;
             mapperReport.Date = new DateTime();
             await _context.Reports.AddAsync(mapperReport);
             await _context.SaveChangesAsync();
-            return _mapper.Map<ReportDto>(mapperReport);
+            return _mapper.Map<GetReportDto>(mapperReport);
         }
 
         public async Task UpdateReportAsync(int id, ReportDto updateReport)
@@ -55,9 +53,9 @@ namespace backend.Business.Services
 
             result.CarNumber = updateReport.CarNumber;
             result.Date = updateReport.Date;
-            result.EventType = _mapper.Map<EventType>(updateReport.EventType);
+         //   result.EventType = _mapper.Map<EventType>(updateReport.EventType);
           //  result.Location = updateReport.Location;
-            result.Name = updateReport.Name;
+          //  result.Name = updateReport.Name;
             result.Note = updateReport.Note;
          //   result.Casualties = updateReport.Casualties;
        //     result.SeverityLevelType = updateReport.SeverityLevelType;

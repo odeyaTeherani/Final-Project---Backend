@@ -11,6 +11,11 @@ namespace backend.Data.Models
 
     public class Report
     {
+        public Report()
+        {
+            Images = new List<Image>();    
+        }
+        
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

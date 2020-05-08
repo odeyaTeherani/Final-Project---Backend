@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.ReportDtoModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Business.Interfaces
@@ -9,7 +10,7 @@ namespace backend.Business.Interfaces
     {
         Task<List<ReportDto>> GetAllAsync();
         Task<ReportDto> GetByIdAsync(int id);
-        Task<ReportDto> AddNewReportAsync(ReportDto newReport);
+        Task<GetReportDto> AddNewReportAsync(AddReportDto newReport);
         Task UpdateReportAsync(int id, ReportDto updateReport);
         void DeleteAsync(int id);
 
