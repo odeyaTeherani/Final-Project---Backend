@@ -8,9 +8,9 @@ namespace backend.Business.Interfaces
 {
     public interface IReportService
     {
-        Task<List<ReportDto>> GetAllAsync();
-        Task<ReportDto> GetByIdAsync(int id);
-        Task<GetReportDto> AddNewReportAsync(AddReportDto newReport);
+        Task<List<GetReportDto>> GetAllAsync(bool isAdmin,string userName);
+        Task<GetReportDto> GetByIdAsync(int id);
+        Task<GetReportDto> AddNewReportAsync(AddReportDto newReport,string userName);
         Task UpdateReportAsync(int id, ReportDto updateReport);
         void DeleteAsync(int id);
 
