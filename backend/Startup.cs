@@ -23,6 +23,8 @@ namespace backend
 {
     public class Startup
     {
+        readonly string corsSettings = "corsSettings";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,8 +35,21 @@ namespace backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: corsSettings,
+                    builder =>
+                    {
+                        builder.WithOrigins(
+                                "http://localhost:4200",
+                                "https://localhost:4200")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader();
+                    });
+            });
+            
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("EventsDatabase")));
@@ -118,6 +133,8 @@ namespace backend
             {
                 app.UseSpaStaticFiles();
             }
+
+            app.UseCors(corsSettings);
 
             app.UseRouting();
             

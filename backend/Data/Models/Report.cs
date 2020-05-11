@@ -11,6 +11,11 @@ namespace backend.Data.Models
 
     public class Report
     {
+        public Report()
+        {
+            Images = new List<Image>();    
+        }
+        
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -18,13 +23,10 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
-
-        [ForeignKey("SeverityLevelTypeId")]
-        public int SeverityLevelTypeId { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
-        public int LocationId { get; set; }
+        public int? LocationId { get; set; }
         public Location Location { get; set; }
 
         public DateTime Date { get; set; }
