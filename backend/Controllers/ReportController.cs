@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.ReportDtoModels;
 using backend.Business.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,21 +24,21 @@ namespace backend.Controllers
 
         // https://localhost:44341/report 
         [HttpGet]
-        public async Task<List<ReportDto>> GetAsync()
+        public async Task<IActionResult> GetAsync()
         {
-            return await _reportService.GetAllAsync();
+            return Ok(await _reportService.GetAllAsync(User.IsInRole("admin"),"david"));
         }
 
         /// <summary>
         ///  TODO: Delete -------> jest for Roles example 
         /// </summary>
         /// <returns></returns>
-        [Authorize(Roles = "admin")]
-        [HttpGet ("admin")]
-        public async Task<List<ReportDto>> GetAsyncAdmin()
-        {
-            return await _reportService.GetAllAsync();
-        }
+        // [Authorize(Roles = "admin")]
+        // [HttpGet ("admin")]
+        // public async Task<List<ReportDto>> GetAsyncAdmin()
+        // {
+        //     return await _reportService.GetAllAsync();
+        // }
 
 
         // https://localhost:44341/report/{id}
@@ -50,10 +52,11 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public async Task<IActionResult> AddNewReport([FromBody] ReportDto newReport)
+        public async Task<IActionResult> AddNewReport([FromBody] AddReportDto newReport)
         {
+            var username = User.FindFirst("Sub")?.Value;
             if (newReport == null) throw new CustomException($"The new report is empty");
-            var result = await _reportService.AddNewReportAsync(newReport);
+            var result = await _reportService.AddNewReportAsync(newReport,username);
             return CreatedAtAction("GetById", new { id = result.Id }, result);
         }
 
