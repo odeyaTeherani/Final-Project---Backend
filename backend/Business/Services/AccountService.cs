@@ -78,7 +78,7 @@ namespace backend.Business.Services
             // signInManager if from the identity library
             var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false); // send the email and the password and confirm the password - check if the user connect
 
-            if (!result.Succeeded) throw new CustomException($"User or Password are incorrect"); // HttpStatusCode?
+            if (!result.Succeeded) throw new CustomException($"User or Password are incorrect");
             var user = _userManager.Users.SingleOrDefault(r => r.UserName == model.Username);
             var roles = await _userManager.GetRolesAsync(user);
 
@@ -102,14 +102,14 @@ namespace backend.Business.Services
             if (!result.Succeeded)
             {
                 // var errors = result.Errors.Select(x => x.Description);
-                throw new CustomException("Change Password failed");
+                throw new CustomException($"Change Password failed");
             }
             return result;
         }
 
         public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model)
         {
-            // Get the existing student from the db
+            // Get the existing user from the db
             var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
             if (user == null)
                 throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
@@ -149,8 +149,8 @@ namespace backend.Business.Services
             claims.AddRange(userRole.Select(role => new Claim("roles", role))); // required
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); // Adding security
+            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"])); //"JwtExpireDays" days without login - Automatically disconnect the user 
 
             var token = new JwtSecurityToken( // create new token
                 _configuration["JwtIssuer"],  // token issuer name
@@ -166,13 +166,11 @@ namespace backend.Business.Services
         public void SeedRoles()
         {
             if (!_roleManager.RoleExistsAsync("admin").Result)
-            {
                 _roleManager.CreateAsync(new IdentityRole("admin")).Wait();
-            }            
             if (!_roleManager.RoleExistsAsync("user").Result)
-            {
-                _roleManager.CreateAsync(new IdentityRole("user")).Wait();
-            }
+                _roleManager.CreateAsync(new IdentityRole("user")).Wait();            
+            if (!_roleManager.RoleExistsAsync("developer").Result)
+                _roleManager.CreateAsync(new IdentityRole("developer")).Wait();
         }
     }
 }
