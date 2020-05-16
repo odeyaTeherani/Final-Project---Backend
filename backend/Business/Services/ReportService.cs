@@ -55,7 +55,7 @@ namespace backend.Business.Services
         {
             var mapperReport = _mapper.Map<Report>(newReport);
             mapperReport.Date = DateTime.Now;
-            mapperReport.Name = "david";
+            mapperReport.Name = userName;
             await _context.Reports.AddAsync(mapperReport);
             await _context.SaveChangesAsync();
             return _mapper.Map<GetReportDto>(mapperReport);
