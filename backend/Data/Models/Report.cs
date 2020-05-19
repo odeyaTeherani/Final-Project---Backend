@@ -23,6 +23,7 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
+
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
@@ -31,6 +32,7 @@ namespace backend.Data.Models
 
         public DateTime Date { get; set; }
         public string CarNumber { get; set; }
+
         /// <summary>
         /// represent the current connected user
         /// </summary>

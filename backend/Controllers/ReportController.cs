@@ -1,11 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Net;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using backend.Business.Dto;
+﻿using System.Threading.Tasks;
 using backend.Business.Dto.ReportDtoModels;
 using backend.Business.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EventController : ControllerBase
     {
         private readonly IEventService _eventService;
@@ -20,7 +20,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/event
         [HttpGet]
-        public async Task<List<EventDto>> GetAsync()
+        public async Task<List<EventDto>> Get()
         {
             // consider to implement paging mechanism 
             return await _eventService.GetAllAsync();
@@ -36,10 +36,11 @@ namespace backend.Controllers
 
         // https://localhost:44341/event
         [HttpPost]
-        public async Task<IActionResult> AddNewEventAsync([FromBody] EventDto newEvent)
+        public async Task<IActionResult> AddNewEvent([FromBody] EventDto newEvent)
         {
+            var username = User.FindFirst("Sub")?.Value;
             if (newEvent == null) throw new CustomException($"The new event is empty");
-            var result = await _eventService.AddNewEventAsync(newEvent);
+            var result = await _eventService.AddNewEventAsync(newEvent, username);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
 
         }
@@ -47,7 +48,7 @@ namespace backend.Controllers
         // One of the parameters are empty
         // https://localhost:44341/event/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateEventAsync(int id, [FromBody] EventDto updateEvent)
+        public async Task<IActionResult> UpdateEvent(int id, [FromBody] EventDto updateEvent)
         {
             if (updateEvent == null) throw new CustomException($"The event is empty");
             await _eventService.UpdateEventAsync(id, updateEvent);
@@ -56,7 +57,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/event/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteAsync(int id)
+        public IActionResult Delete(int id)
         {
              _eventService.DeleteAsync(id);
              return Ok();
