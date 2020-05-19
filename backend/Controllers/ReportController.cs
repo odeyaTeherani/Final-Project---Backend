@@ -23,10 +23,12 @@ namespace backend.Controllers
         
 
         // https://localhost:44341/report 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> GetAsync()
         {
-            return Ok(await _reportService.GetAllAsync(User.IsInRole("admin"),"david"));
+            var username = User.FindFirst("Sub")?.Value;
+            return Ok(await _reportService.GetAllAsync(User.IsInRole("admin"),username));
         }
 
         /// <summary>

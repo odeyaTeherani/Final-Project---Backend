@@ -13,5 +13,7 @@ namespace backend.Data.Models
         [Key] // "Id" is primary key (uniq)
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The "Id" will be managed automatically
         public int Id { get; set; } //primary key
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
     }
 }

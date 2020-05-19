@@ -48,6 +48,8 @@ namespace backend.Business.Dto
                     cfg.CreateMap<EventTypeDto, EventType>();
                     cfg.CreateMap<Event, EventDto>();
                     cfg.CreateMap<EventDto, Event>();
+                    cfg.CreateMap<LocationDto, Location>();
+                    cfg.CreateMap<Location, LocationDto>();
 
                     //cfg.CreateMap<User, UserDto>();
                     //cfg.CreateMap<UserDto, User>();
