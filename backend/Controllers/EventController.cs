@@ -38,8 +38,9 @@ namespace backend.Controllers
         [HttpPost]
         public async Task<IActionResult> AddNewEventAsync([FromBody] EventDto newEvent)
         {
+            var username = User.FindFirst("Sub")?.Value;
             if (newEvent == null) throw new CustomException($"The new event is empty");
-            var result = await _eventService.AddNewEventAsync(newEvent);
+            var result = await _eventService.AddNewEventAsync(newEvent, username);
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
 
         }
