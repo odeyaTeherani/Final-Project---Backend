@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.UserDto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Authorization;

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.UserDto;
 using Microsoft.AspNetCore.Identity;
 
 namespace backend.Business.Interfaces
