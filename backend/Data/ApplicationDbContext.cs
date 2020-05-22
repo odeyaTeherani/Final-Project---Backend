@@ -35,6 +35,12 @@ namespace backend.Data
                         Type = "Collapsing Building"
                     }
                 });
+
+            builder.Entity<Report>()
+                .HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey("UserId")
+                .IsRequired();
         }
     }
 }

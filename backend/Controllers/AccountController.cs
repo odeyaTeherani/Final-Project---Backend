@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.UserDto;
 using backend.Business.Interfaces;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -49,7 +50,7 @@ namespace backend.Controllers
         private async Task<IActionResult> UpdateUserAsync([FromBody] UserInformationDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
-            return Ok( await _account.UpdateUserAsync(model));
+            return Ok(await _account.UpdateUserAsync(model));
         }
 
 

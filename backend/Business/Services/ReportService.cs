@@ -29,15 +29,17 @@ namespace backend.Business.Services
             List<Report> all;
             if(isAdmin)
                  all = await _context.Reports
+                     .Include(x => x.User)
                      .Include(x=>x.EventType)
                      .Include(x=>x.Location)
                      .ToListAsync();
             else
             {
                 all = await _context.Reports
+                    .Include(x => x.User)
                     .Include(x=>x.EventType)
                     .Include(x=>x.Location)
-                    .Where(report => report.Name.Equals(userName))
+                    .Where(report => report.UserId.Equals(userName))
                     .ToListAsync();
             }
             return _mapper.Map<List<GetReportDto>>(all.OrderByDescending(report => report.Date));
@@ -47,6 +49,7 @@ namespace backend.Business.Services
         {
             var result = await 
                 _context.Reports
+                    .Include(x=>x.User)
                     .Include(x=>x.Images)
                     .Include(x => x.EventType)
                     .Include(x=> x.Location)
@@ -59,7 +62,7 @@ namespace backend.Business.Services
         {
             var mapperReport = _mapper.Map<Report>(newReport);
             mapperReport.Date = DateTime.Now;
-            mapperReport.Name = userName;
+            mapperReport.UserId = userName;
             await _context.Reports.AddAsync(mapperReport);
             await _context.SaveChangesAsync();
             return _mapper.Map<GetReportDto>(mapperReport);

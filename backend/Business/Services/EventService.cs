@@ -9,6 +9,7 @@ using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
@@ -45,7 +46,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventDto>(result);
         }
 
-        public async Task<EventDto> AddNewEventAsync(EventDto newEvent)
+        public async Task<EventDto> AddNewEventAsync(EventDto newEvent, string userName)
         {
             var mapperEvent = _mapper.Map<Event>(newEvent);
             await _context.Events.AddAsync(mapperEvent);

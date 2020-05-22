@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using AutoMapper;
 using backend.Business.Dto.ReportDtoModels;
+using backend.Business.Dto.UserDto;
 using backend.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,7 +52,7 @@ namespace backend.Business.Dto
                     cfg.CreateMap<LocationDto, Location>();
                     cfg.CreateMap<Location, LocationDto>();
 
-                    //cfg.CreateMap<User, UserDto>();
+                    cfg.CreateMap<ApplicationUser, GetBasicUserInformation>();
                     //cfg.CreateMap<UserDto, User>();
                 }
             );
