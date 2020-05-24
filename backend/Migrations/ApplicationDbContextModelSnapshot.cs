@@ -469,7 +469,7 @@ namespace backend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
                         .HasForeignKey("LocationId");
                 });
 #pragma warning restore 612, 618

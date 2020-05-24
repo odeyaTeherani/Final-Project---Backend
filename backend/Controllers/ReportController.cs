@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using backend.Business.Dto.ReportDtoModels;
 using backend.Business.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers

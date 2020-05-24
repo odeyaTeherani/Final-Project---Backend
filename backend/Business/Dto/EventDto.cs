@@ -10,7 +10,7 @@ namespace backend.Business.Dto
         public int Id { get; set; } //primary key
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
-        //public Location Location { get; set; }
+        public Location Location { get; set; }
         public SeverityLevel SeverityLevelType { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime EndDate { get; set; }
