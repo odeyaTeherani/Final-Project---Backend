@@ -10,8 +10,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200521164513_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200524172438_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -230,17 +230,47 @@ namespace backend.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EventTypeId")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventTypeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
+                    b.Property<string>("NameInCharge")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumOfAmbulances")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfDead")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfEnvironment")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfFirefighters")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfInjured")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfPolice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfZakaCars")
+                        .HasColumnType("int");
+
                     b.Property<int>("SeverityLevelType")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -351,15 +381,16 @@ namespace backend.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
 
                     b.Property<int>("SeverityLevelType")
                         .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -368,6 +399,8 @@ namespace backend.Migrations
                     b.HasIndex("EventTypeId");
 
                     b.HasIndex("LocationId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Reports");
                 });
@@ -427,7 +460,9 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Data.Models.EventType", "EventType")
                         .WithMany()
-                        .HasForeignKey("EventTypeId");
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("backend.Data.Models.Location", "Location")
                         .WithMany()
@@ -460,6 +495,12 @@ namespace backend.Migrations
                     b.HasOne("backend.Data.Models.Location", "Location")
                         .WithMany()
                         .HasForeignKey("LocationId");
+
+                    b.HasOne("backend.Data.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
