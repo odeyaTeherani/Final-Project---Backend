@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Business.Dto.UserDto;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data.Models;
@@ -140,9 +141,11 @@ namespace backend.Business.Services
             // Information that we put on the basic token
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                //new Claim("lastName", user.LastName),
+                //new Claim("firstName", user.FirstName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                // new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("email",user.Email)
             };
 

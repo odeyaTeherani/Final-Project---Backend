@@ -23,21 +23,19 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
-
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
         public int? LocationId { get; set; }
         public Location Location { get; set; }
 
+        [ForeignKey("UserId")]
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
         public DateTime Date { get; set; }
         public string CarNumber { get; set; }
 
-        /// <summary>
-        /// represent the current connected user
-        /// </summary>
-        public string Name { get; set; } // reporter's name
-        
         [MaxLength(200)]
         public string Note { get; set; }
         public int Casualties { get; set; } // num of casualties

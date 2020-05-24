@@ -24,6 +24,10 @@ namespace backend.Business.Dto.ReportDtoModels
         public int Casualties { get; set; } // num of casualties
 
         public List<string> Images { get; set; }
+        
+                
+        [JsonProperty("location")]
+        public LocationDto Location { get; set; }
 
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace backend.Business.Dto
+namespace backend.Business.Dto.UserDto
 {
     public class LoginDto
     {

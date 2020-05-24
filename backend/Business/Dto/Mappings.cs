@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using AutoMapper;
 using backend.Business.Dto.ReportDtoModels;
+using backend.Business.Dto.UserDto;
 using backend.Data.Models;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -44,12 +45,15 @@ namespace backend.Business.Dto
                             reportDto.EventType = report.EventType?.Type;
                         });
 
-
                     cfg.CreateMap<EventType, EventTypeDto>();
                     cfg.CreateMap<EventTypeDto, EventType>();
                     cfg.CreateMap<Event, EventDto>();
-                    cfg.CreateMap<EventDto, Event>();                    
+                    cfg.CreateMap<EventDto, Event>();
+                    cfg.CreateMap<LocationDto, Location>();
+                    cfg.CreateMap<Location, LocationDto>();
 
+                    cfg.CreateMap<ApplicationUser, GetBasicUserInformation>();
+                    //cfg.CreateMap<UserDto, User>();
                 }
             );
         }

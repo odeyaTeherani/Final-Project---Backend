@@ -10,6 +10,7 @@ using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
