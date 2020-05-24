@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,7 +19,7 @@ namespace backend.Business.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        private QueryHelper<Event> _queryHelper;
+        private readonly QueryHelper<Event> _queryHelper;
 
         public EventService(ApplicationDbContext context, IMapper mapper)
         {
@@ -49,6 +50,7 @@ namespace backend.Business.Services
         public async Task<EventDto> AddNewEventAsync(EventDto newEvent, string userName)
         {
             var mapperEvent = _mapper.Map<Event>(newEvent);
+            mapperEvent.CreateDate = DateTime.Now;
             await _context.Events.AddAsync(mapperEvent);
             await _context.SaveChangesAsync();
             return _mapper.Map<EventDto>(mapperEvent);
@@ -59,13 +61,12 @@ namespace backend.Business.Services
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
 
-            result.Date = updateEvent.Date;
-            result.EventType = updateEvent.EventType;
-            result.Images = updateEvent.Images;
-            result.Location = updateEvent.Location;
-            result.Reports = updateEvent.Reports;
-            result.Date = updateEvent.Date;
-            result.SeverityLevelType = updateEvent.SeverityLevelType;
+            result.CreateDate = updateEvent.CreateDate;
+            //result.EventType = updateEvent.EventType;
+            //result.Images = updateEvent.Images;
+           // result.Location = updateEvent.Location;
+            //result.Reports = updateEvent.Reports;
+            //result.SeverityLevelType = updateEvent.SeverityLevelType;
             await _context.SaveChangesAsync();
         
         }
