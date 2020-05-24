@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -187,10 +187,20 @@ namespace backend.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    EventTypeId = table.Column<int>(nullable: true),
+                    EventTypeId = table.Column<int>(nullable: false),
                     SeverityLevelType = table.Column<int>(nullable: false),
                     LocationId = table.Column<int>(nullable: true),
-                    Date = table.Column<DateTime>(nullable: false)
+                    CreateDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    NumOfInjured = table.Column<int>(nullable: false),
+                    NumOfDead = table.Column<int>(nullable: false),
+                    NumOfPolice = table.Column<int>(nullable: false),
+                    NumOfAmbulances = table.Column<int>(nullable: false),
+                    NumOfFirefighters = table.Column<int>(nullable: false),
+                    NumOfEnvironment = table.Column<int>(nullable: false),
+                    NumOfZakaCars = table.Column<int>(nullable: false),
+                    NameInCharge = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -200,7 +210,7 @@ namespace backend.Migrations
                         column: x => x.EventTypeId,
                         principalTable: "EventTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Events_Locations_LocationId",
                         column: x => x.LocationId,
@@ -218,9 +228,9 @@ namespace backend.Migrations
                     EventTypeId = table.Column<int>(nullable: false),
                     SeverityLevelType = table.Column<int>(nullable: false),
                     LocationId = table.Column<int>(nullable: true),
+                    UserId = table.Column<string>(nullable: false),
                     Date = table.Column<DateTime>(nullable: false),
                     CarNumber = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
                     Note = table.Column<string>(maxLength: 200, nullable: true),
                     Casualties = table.Column<int>(nullable: false),
                     EventId = table.Column<int>(nullable: true)
@@ -246,6 +256,12 @@ namespace backend.Migrations
                         principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Reports_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -359,6 +375,11 @@ namespace backend.Migrations
                 name: "IX_Reports_LocationId",
                 table: "Reports",
                 column: "LocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_UserId",
+                table: "Reports",
+                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -385,13 +406,13 @@ namespace backend.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "Reports");
 
             migrationBuilder.DropTable(
                 name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "EventTypes");

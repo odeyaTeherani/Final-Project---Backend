@@ -228,17 +228,47 @@ namespace backend.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("EventTypeId")
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EventTypeId")
                         .HasColumnType("int");
 
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
+                    b.Property<string>("NameInCharge")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("NumOfAmbulances")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfDead")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfEnvironment")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfFirefighters")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfInjured")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfPolice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NumOfZakaCars")
+                        .HasColumnType("int");
+
                     b.Property<int>("SeverityLevelType")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -349,9 +379,6 @@ namespace backend.Migrations
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(200)")
                         .HasMaxLength(200);
@@ -431,7 +458,9 @@ namespace backend.Migrations
                 {
                     b.HasOne("backend.Data.Models.EventType", "EventType")
                         .WithMany()
-                        .HasForeignKey("EventTypeId");
+                        .HasForeignKey("EventTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("backend.Data.Models.Location", "Location")
                         .WithMany()
@@ -469,8 +498,7 @@ namespace backend.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasForeignKey("LocationId");
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
