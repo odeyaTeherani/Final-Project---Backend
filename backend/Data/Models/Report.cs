@@ -40,5 +40,10 @@ namespace backend.Data.Models
         public string Note { get; set; }
         public int Casualties { get; set; } // num of casualties
         public List<Image> Images { get; set; }
+        
+        
+        [ForeignKey("EventId")]
+        public int? EventId { get; set; }
+        public Event Event { get; set; }
     }
 }
