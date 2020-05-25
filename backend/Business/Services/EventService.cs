@@ -11,6 +11,7 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
@@ -47,13 +48,19 @@ namespace backend.Business.Services
             return _mapper.Map<EventDto>(result);
         }
 
-        public async Task<EventDto> AddNewEventAsync(EventDto newEvent, string userName)
+        public async Task<EventDto> AddNewEventAsync([FromBody] EventDto newEvent, string userName)
         {
-            var mapperEvent = _mapper.Map<Event>(newEvent);
-            mapperEvent.CreateDate = DateTime.Now;
-            await _context.Events.AddAsync(mapperEvent);
+            var mappedEvent = _mapper.Map<Event>(newEvent);
+            var reportsIds = mappedEvent.Reports?.Select(report => report.Id).ToList();
+            mappedEvent.Reports = null;
+            mappedEvent.CreateDate = DateTime.Now;
+            await _context.Events.AddAsync(mappedEvent);
+
+            var originalReports = _context.Reports.Where(report => reportsIds.Contains(report.Id)).ToList();
+            originalReports.ForEach(report => { report.Event = mappedEvent; });
+            
             await _context.SaveChangesAsync();
-            return _mapper.Map<EventDto>(mapperEvent);
+            return _mapper.Map<EventDto>(mappedEvent);
         }
 
         public async Task UpdateEventAsync(int id, EventDto updateEvent)

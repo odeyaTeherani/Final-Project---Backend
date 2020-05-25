@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using backend.Business.Dto.ReportDtoModels;
 using backend.Data.Enums;
 using backend.Data.Models;
 using Newtonsoft.Json;
@@ -9,10 +10,11 @@ namespace backend.Business.Dto
     public class EventDto
     {
         public int Id { get; set; } //primary key
-        public int EventTypeId { get; set; }
-        public EventType EventType { get; set; }
         
-        public Location Location { get; set; }
+        public EventTypeDto EventType { get; set; }
+        
+        // public Location Location { get; set; }
+        
         [JsonProperty("severityLevel")]
         public SeverityLevel SeverityLevelType { get; set; }
         
@@ -48,8 +50,6 @@ namespace backend.Business.Dto
         
         [JsonProperty("nameInCharge")]
         public string NameInCharge { get; set; }
-        
-        public List<Report> Reports { get; set; }
-        public List<string> Images { get; set; }
+        public List<ReportDto> Reports { get; set; }
     }
 }
