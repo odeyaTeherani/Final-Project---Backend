@@ -19,6 +19,8 @@ namespace backend.Business.Dto
             return new MapperConfiguration((cfg) =>
                 {
                     cfg.CreateMap<Report, ReportDto>();
+                    cfg.CreateMap<ReportDto, Report>();
+                  
 
                     cfg.CreateMap<AddReportDto, Report>()
                         .ForMember(x => x.Images,
@@ -48,7 +50,13 @@ namespace backend.Business.Dto
                     cfg.CreateMap<EventType, EventTypeDto>();
                     cfg.CreateMap<EventTypeDto, EventType>();
                     cfg.CreateMap<Event, EventDto>();
-                    cfg.CreateMap<EventDto, Event>();
+                    cfg.CreateMap<EventDto, Event>()
+                        .ForMember(x=>x.EventType,opt => opt.Ignore())
+                        .AfterMap((dto, e) =>
+                        {
+                            e.EventTypeId = dto.EventType.Id;
+                  
+                        });
                     cfg.CreateMap<LocationDto, Location>();
                     cfg.CreateMap<Location, LocationDto>();
 
