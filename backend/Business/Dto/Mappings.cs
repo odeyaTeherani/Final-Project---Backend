@@ -52,6 +52,7 @@ namespace backend.Business.Dto
                     cfg.CreateMap<Event, EventDto>();
                     cfg.CreateMap<EventDto, Event>()
                         .ForMember(x=>x.EventType,opt => opt.Ignore())
+                        .ForMember(x=>x.Id,opt => opt.Ignore())
                         .AfterMap((dto, e) =>
                         {
                             e.EventTypeId = dto.EventType.Id;

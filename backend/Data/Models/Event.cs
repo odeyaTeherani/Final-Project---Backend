@@ -40,6 +40,7 @@ namespace backend.Data.Models
         public int? NumOfEnvironment { get; set; }
         public int? NumOfZakaCars { get; set; }
         public string? NameInCharge { get; set; }
+        public string? Note { get; set; }
         public List<Report>? Reports { get; set; }
         public List<Image>? Images { get; set; }
 

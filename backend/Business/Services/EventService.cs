@@ -10,7 +10,6 @@ using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -67,15 +66,26 @@ namespace backend.Business.Services
         {
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
-
-            result.CreateDate = updateEvent.CreateDate;
-            //result.EventType = updateEvent.EventType;
+            
+            var mappedEvent = _mapper.Map<Event>(updateEvent);
+            result.StartDate = updateEvent.StartDate;
+            result.EndDate = updateEvent.EndDate;
+            result.CreateDate = mappedEvent.CreateDate;
+            result.NameInCharge = mappedEvent.NameInCharge;
+            result.NumOfZakaCars = mappedEvent.NumOfZakaCars;
+            result.NumOfAmbulances = mappedEvent.NumOfAmbulances;
+            result.NumOfDead = mappedEvent.NumOfDead;
+            result.NumOfEnvironment = mappedEvent.NumOfEnvironment;
+            result.NumOfFirefighters = mappedEvent.NumOfFirefighters;
+            result.NumOfInjured = mappedEvent.NumOfInjured;
+            result.NumOfPolice = mappedEvent.NumOfPolice;
+            result.Note = mappedEvent.Note;
+            // result.EventType = updateEvent.EventType;
             //result.Images = updateEvent.Images;
            // result.Location = updateEvent.Location;
             //result.Reports = updateEvent.Reports;
             //result.SeverityLevelType = updateEvent.SeverityLevelType;
             await _context.SaveChangesAsync();
-        
         }
 
         public async void DeleteAsync(int id)
