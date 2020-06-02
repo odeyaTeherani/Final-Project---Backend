@@ -12,6 +12,9 @@ namespace backend.Business.Dto.ReportDtoModels
     {
         public int Id { get; set; }
         
+        [JsonProperty("eventType")]
+        public EventTypeDto EventType { get; set; }
+
         [JsonProperty("severityLevel")]
         public SeverityLevel SeverityLevelType { get; set; }
         // public Location Location { get; set; }
@@ -25,9 +28,7 @@ namespace backend.Business.Dto.ReportDtoModels
 
         public List<string> Images { get; set; }
         
-                
         [JsonProperty("location")]
         public LocationDto Location { get; set; }
-
     }
 }

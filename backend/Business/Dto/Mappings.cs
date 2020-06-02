@@ -19,12 +19,14 @@ namespace backend.Business.Dto
             return new MapperConfiguration((cfg) =>
                 {
                     cfg.CreateMap<Report, ReportDto>();
-                    cfg.CreateMap<ReportDto, Report>();
+                    // cfg.CreateMap<ReportDto, Report>();
                   
 
-                    cfg.CreateMap<AddReportDto, Report>()
+                    cfg.CreateMap<ReportDto, Report>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
+                        .ForMember(x=>x.EventType,
+                            opt=>opt.Ignore())
                         .AfterMap((reportDto, report) =>
                         {
                             report.Images.AddRange(reportDto.Images.Select(imageData => new Image
@@ -33,18 +35,19 @@ namespace backend.Business.Dto
                                     ImageData = imageData
                                 }).ToList()
                             );
+                            report.EventTypeId = reportDto.EventType.Id;
+                  
                         });
 
 
                     cfg.CreateMap<Report, GetReportDto>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
-                        .ForMember(x => x.EventType,
-                            opt => opt.Ignore())
+                        // .ForMember(x => x.EventType, opt => opt.Ignore())
                         .AfterMap((report, reportDto) =>
                         {
                             reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
-                            reportDto.EventType = report.EventType?.Type;
+                            // reportDto.EventType.Type = report.EventType?.Type;
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();

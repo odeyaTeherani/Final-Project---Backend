@@ -23,6 +23,7 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int EventTypeId { get; set; }
         public EventType EventType { get; set; }
+        
         public SeverityLevel SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]

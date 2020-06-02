@@ -80,11 +80,11 @@ namespace backend.Business.Services
             result.NumOfInjured = mappedEvent.NumOfInjured;
             result.NumOfPolice = mappedEvent.NumOfPolice;
             result.Note = mappedEvent.Note;
-            // result.EventType = updateEvent.EventType;
+            result.EventTypeId = updateEvent.EventType.Id;
             //result.Images = updateEvent.Images;
            // result.Location = updateEvent.Location;
-            //result.Reports = updateEvent.Reports;
-            //result.SeverityLevelType = updateEvent.SeverityLevelType;
+            // result.Reports = updateEvent.Reports;
+            result.SeverityLevelType = updateEvent.SeverityLevelType;
             await _context.SaveChangesAsync();
         }
 

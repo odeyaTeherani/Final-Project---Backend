@@ -50,7 +50,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public async Task<IActionResult> AddNewReport([FromBody] AddReportDto newReport)
+        public async Task<IActionResult> AddNewReport([FromBody] ReportDto newReport)
         {
             var username = User.FindFirst("Sub")?.Value;
             if (newReport == null) throw new CustomException($"The new report is empty");

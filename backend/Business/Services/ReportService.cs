@@ -58,7 +58,7 @@ namespace backend.Business.Services
             return _mapper.Map<GetReportDto>(result);
         }
 
-        public async Task<GetReportDto> AddNewReportAsync(AddReportDto newReport,string userName)
+        public async Task<GetReportDto> AddNewReportAsync(ReportDto newReport,string userName)
         {
             var mapperReport = _mapper.Map<Report>(newReport);
             mapperReport.Date = DateTime.Now;
