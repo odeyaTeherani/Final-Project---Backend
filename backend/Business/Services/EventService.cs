@@ -36,7 +36,8 @@ namespace backend.Business.Services
         {
             var all = await GetEvent()
                 .ToListAsync();
-            return _mapper.Map<List<EventDto>>(all);
+             var OrderByDescending = all.OrderByDescending(e => e.StartDate);
+            return _mapper.Map<List<EventDto>>(OrderByDescending);
         }
 
         public async Task<EventDto> GetByIdAsync(int id)
