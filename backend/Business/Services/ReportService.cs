@@ -39,8 +39,8 @@ namespace backend.Business.Services
                     .Where(report => report.UserId.Equals(userName))
                     .ToListAsync();
             }
-            var OrderByDescending = all.OrderByDescending(r => r.Date);
-            return _mapper.Map<List<GetReportDto>>(OrderByDescending);
+            var orderByDescending = all.OrderByDescending(r => r.Date);
+            return _mapper.Map<List<GetReportDto>>(orderByDescending);
         }
 
         public async Task<GetReportDto> GetByIdAsync(int id)

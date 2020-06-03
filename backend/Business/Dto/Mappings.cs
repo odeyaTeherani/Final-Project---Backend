@@ -52,13 +52,27 @@ namespace backend.Business.Dto
 
                     cfg.CreateMap<EventType, EventTypeDto>();
                     cfg.CreateMap<EventTypeDto, EventType>();
-                    cfg.CreateMap<Event, EventDto>();
+                    cfg.CreateMap<Event, EventDto>()
+                        .ForMember(x => x.Images,
+                            opt => opt.Ignore())
+                        .AfterMap((report, reportDto) =>
+                        {
+                            reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
+                        });
                     cfg.CreateMap<EventDto, Event>()
+                        .ForMember(x => x.Images,
+                            opt => opt.Ignore())
                         .ForMember(x=>x.EventType,opt => opt.Ignore())
                         .ForMember(x=>x.Id,opt => opt.Ignore())
                         .AfterMap((dto, e) =>
                         {
                             e.EventTypeId = dto.EventType.Id;
+                            e.Images.AddRange(dto.Images.Select(imageData => new Image
+                                {
+                                    Id = Guid.NewGuid(),
+                                    ImageData = imageData
+                                }).ToList()
+                            );
                   
                         });
                     cfg.CreateMap<LocationDto, Location>();

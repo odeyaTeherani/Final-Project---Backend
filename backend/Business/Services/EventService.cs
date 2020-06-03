@@ -36,8 +36,8 @@ namespace backend.Business.Services
         {
             var all = await GetEvent()
                 .ToListAsync();
-             var OrderByDescending = all.OrderByDescending(e => e.StartDate);
-            return _mapper.Map<List<EventDto>>(OrderByDescending);
+             var orderByDescending = all.OrderByDescending(e => e.StartDate);
+            return _mapper.Map<List<EventDto>>(orderByDescending);
         }
 
         public async Task<EventDto> GetByIdAsync(int id)
@@ -82,7 +82,7 @@ namespace backend.Business.Services
             result.NumOfPolice = mappedEvent.NumOfPolice;
             result.Note = mappedEvent.Note;
             result.EventTypeId = updateEvent.EventType.Id;
-            //result.Images = updateEvent.Images;
+            // result.Images. = mappedEvent.Images.;
            // result.Location = updateEvent.Location;
             // result.Reports = updateEvent.Reports;
             result.SeverityLevelType = updateEvent.SeverityLevelType;
