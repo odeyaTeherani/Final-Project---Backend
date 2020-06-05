@@ -7,7 +7,6 @@ using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
@@ -55,9 +54,9 @@ namespace backend.Business.Services
             return _mapper.Map<EventTypeDto>(result);
         }
 
-        public async void DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
-            var result = await _context.EventTypes.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
+            var result = await _context.EventTypes.AsNoTracking().SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didnt find return null
             if (result == null) throw new CustomException($"Event Type whit id {id} not found", HttpStatusCode.NotFound);
             _context.EventTypes.Remove(result);
             await _context.SaveChangesAsync();

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EventTypeController : ControllerBase
     {
         private readonly IEventTypeService _eventTypeService;
@@ -29,7 +29,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _eventTypeService.GetByIdAsync(id);
             return Ok(result);
@@ -42,7 +42,7 @@ namespace backend.Controllers
         {
             if (newEventType == null) throw new CustomException($"The new event type is empty");
             var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
-            return CreatedAtAction("GetByIdAsync", new {id = result.Id}, result);
+            return CreatedAtAction(nameof(GetById), new {id = result.Id}, result);
         }
 
 

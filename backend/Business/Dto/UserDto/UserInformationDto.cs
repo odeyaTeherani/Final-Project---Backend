@@ -36,5 +36,7 @@ namespace backend.Business.Dto.UserDto
         [DataType(DataType.Text)]
         [Display(Name = "Last name")]
         public string LastName { get; set; }
+
+        public string PhoneNumber { get; set; }
     }
 }

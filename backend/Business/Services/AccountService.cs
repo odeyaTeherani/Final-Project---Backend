@@ -53,7 +53,8 @@ namespace backend.Business.Services
                 UserName = model.UserName,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -108,18 +109,19 @@ namespace backend.Business.Services
             return result;
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model)
+        public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model,ClaimsPrincipal userPrincipal)
         {
             // Get the existing user from the db
-            var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
+            var user = await _userManager.GetUserAsync(userPrincipal);
             if (user == null)
-                throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
+                throw new CustomException($"Unable to load user with ID'.");
 
             // Update it with the values from the view model
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = model.UserName;
             user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
 
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles);
@@ -145,7 +147,7 @@ namespace backend.Business.Services
                 //new Claim("lastName", user.LastName),
                 //new Claim("firstName", user.FirstName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                // new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("email",user.Email)
             };
 
