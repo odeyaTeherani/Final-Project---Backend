@@ -51,7 +51,11 @@ namespace backend.Business.Dto
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();
-                    cfg.CreateMap<EventTypeDto, EventType>();
+                    cfg.CreateMap<EventTypeDto, EventType>();                    
+                    
+                    cfg.CreateMap<UserInformationDto, ApplicationUser>();
+                    cfg.CreateMap<ApplicationUser, UserInformationDto>();
+                    
                     cfg.CreateMap<Event, EventDto>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())

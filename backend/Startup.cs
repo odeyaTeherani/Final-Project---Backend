@@ -59,6 +59,7 @@ namespace backend
             services.AddTransient<IEventService, EventService>();
             services.AddTransient<IEventTypeService, EventTypeService>();
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IUserService, UserService>();
 
             // Mapping Settings
             var mappingConfig = services.InitMappings();
