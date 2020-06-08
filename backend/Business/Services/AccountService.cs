@@ -6,10 +6,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Dto.UserDto;
 using backend.Business.Interfaces;
 using backend.Controllers;
+using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -20,25 +22,30 @@ namespace backend.Business.Services
 {
     public class AccountService : IAccountService
     {
-
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager; // All about the user
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager; // Allow to edit role
+        private readonly IMapper _mapper;
 
         public AccountService(
+            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             ILoggerFactory loggerFactory,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+        IMapper mapper)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<AccountService>();
             _configuration = configuration;
             _roleManager = roleManager;
+            _mapper = mapper;
         }
 
         // registerAsync
@@ -109,7 +116,7 @@ namespace backend.Business.Services
             return result;
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model,ClaimsPrincipal userPrincipal)
+        public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,ClaimsPrincipal userPrincipal)
         {
             // Get the existing user from the db
             var user = await _userManager.GetUserAsync(userPrincipal);
@@ -133,6 +140,23 @@ namespace backend.Business.Services
                 throw new CustomException($"Unable to update.");
             
             return result;
+        }
+        
+        public async Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
+        {
+            var result = await _userManager.GetUserAsync(userPrincipal);
+            if (result == null) 
+                throw new CustomException($"User not found", HttpStatusCode.NotFound);
+            return _mapper.Map<UserInformationDto>(result);
+        }
+
+        public async Task DeleteCurrentAccountAsync(ClaimsPrincipal userPrincipal)
+        {
+            var result = await _userManager.GetUserAsync(userPrincipal);
+            if (result == null)
+                throw new CustomException($"User not found", HttpStatusCode.NotFound);
+            await _userManager.DeleteAsync(result);
+            await _context.SaveChangesAsync();
         }
 
 

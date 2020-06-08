@@ -58,8 +58,6 @@ namespace backend.Controllers
             return CreatedAtAction("GetById", new { id = result.Id }, result);
         }
 
-
-        // One of the parameters are empty
         // https://localhost:44341/report/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReport(int id, [FromBody] ReportDto updateReport)

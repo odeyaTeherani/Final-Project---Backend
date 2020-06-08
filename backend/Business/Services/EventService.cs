@@ -89,7 +89,7 @@ namespace backend.Business.Services
             await _context.SaveChangesAsync();
         }
 
-        public async void DeleteAsync(int id)
+        public async Task DeleteAsync(int id)
         {
             var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
