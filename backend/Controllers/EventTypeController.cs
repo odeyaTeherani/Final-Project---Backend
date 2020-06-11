@@ -59,10 +59,10 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
 
-            _eventTypeService.DeleteAsync(id);
+            await _eventTypeService.DeleteAsync(id);
             return Ok();
         }
     }

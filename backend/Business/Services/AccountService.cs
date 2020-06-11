@@ -145,6 +145,8 @@ namespace backend.Business.Services
         public async Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
         {
             var result = await _userManager.GetUserAsync(userPrincipal);
+            // var role = await _userManager.GetRolesAsync(result);
+            // result.Role = role;
             if (result == null) 
                 throw new CustomException($"User not found", HttpStatusCode.NotFound);
             return _mapper.Map<UserInformationDto>(result);

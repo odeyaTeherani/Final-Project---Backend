@@ -31,7 +31,7 @@ namespace backend.Business.Services
         public async Task<List<UserInformationDto>> GetAllAsync()
         {
             var all = await _userManager.Users.ToListAsync();
-            var orderByDescending = all.OrderByDescending(e => e.FirstName);
+            var orderByDescending = all.OrderByDescending(e => e.LastName);
             return _mapper.Map<List<UserInformationDto>>(orderByDescending);
         }
         
@@ -54,6 +54,7 @@ namespace backend.Business.Services
             user.UserName = model.UserName;
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
+            user.Image = model.Image;
             
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles);
