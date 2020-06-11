@@ -51,7 +51,10 @@ namespace backend.Business.Dto
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();
-                    cfg.CreateMap<EventTypeDto, EventType>();                    
+                    cfg.CreateMap<EventTypeDto, EventType>();                     
+                    
+                    cfg.CreateMap<SubRole, SubRoleDto>();
+                    cfg.CreateMap<SubRoleDto, SubRole>();                    
                     
                     cfg.CreateMap<UserInformationDto, ApplicationUser>();
                     cfg.CreateMap<ApplicationUser, UserInformationDto>();
