@@ -35,12 +35,12 @@ namespace backend.Business.Services
             return _mapper.Map<EventTypeDto>(result);
         }
 
-        public async Task<EventTypeDto> AddNewEventTypeAsync(EventTypeDto newEventType)
+        public async Task<EventTypeDto> AddNewEventTypeAsync(string newEventType)
         {
-            var mapperEventType = _mapper.Map<EventType>(newEventType);
-            await _context.EventTypes.AddAsync(mapperEventType);
+            var newEvent = new EventType {Type = newEventType.Trim()};
+            await _context.EventTypes.AddAsync(newEvent);
             await _context.SaveChangesAsync();
-            return _mapper.Map<EventTypeDto>(mapperEventType);
+            return _mapper.Map<EventTypeDto>(newEvent);
         }
 
         public async Task<EventTypeDto> UpdateEventTypeAsync(int id, EventTypeDto updateEventType)

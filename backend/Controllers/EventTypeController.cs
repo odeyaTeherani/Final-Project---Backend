@@ -38,7 +38,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType
         [HttpPost]
-        public async Task<IActionResult> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
+        public async Task<IActionResult> AddNewEventTypeAsync(string newEventType)
         {
             if (newEventType == null) throw new CustomException($"The new event type is empty");
             var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
