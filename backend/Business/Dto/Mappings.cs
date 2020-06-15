@@ -51,9 +51,19 @@ namespace backend.Business.Dto
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();
-                    cfg.CreateMap<EventTypeDto, EventType>();                    
+                    cfg.CreateMap<EventTypeDto, EventType>();                     
                     
-                    cfg.CreateMap<UserInformationDto, ApplicationUser>();
+                    cfg.CreateMap<SubRole, SubRoleDto>();
+                    cfg.CreateMap<SubRoleDto, SubRole>();
+
+                    cfg.CreateMap<UserInformationDto, ApplicationUser>()
+                        .ForMember(s => s.SubRole,
+                            opt => opt.Ignore())
+                        .AfterMap((subRoleDto, subRole ) =>
+                        {
+                            subRole.SubRoleId = subRoleDto.SubRole.Id;
+                        });
+
                     cfg.CreateMap<ApplicationUser, UserInformationDto>();
                     
                     cfg.CreateMap<Event, EventDto>()
@@ -66,8 +76,10 @@ namespace backend.Business.Dto
                     cfg.CreateMap<EventDto, Event>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
-                        .ForMember(x=>x.EventType,opt => opt.Ignore())
-                        .ForMember(x=>x.Id,opt => opt.Ignore())
+                        .ForMember(x=>x.EventType,
+                            opt => opt.Ignore())
+                        .ForMember(x=>x.Id,
+                            opt => opt.Ignore())
                         .AfterMap((dto, e) =>
                         {
                             e.EventTypeId = dto.EventType.Id;

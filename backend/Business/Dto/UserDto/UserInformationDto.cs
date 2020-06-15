@@ -12,7 +12,8 @@ namespace backend.Business.Dto.UserDto
         [JsonProperty("role")]
         public string Role { get; set; }
         
-        public string SubRole { get; set; }
+        [JsonProperty("subRole")]
+        public SubRoleDto SubRole { get; set; }
 
         [Required]
         [DataType(DataType.Text)]

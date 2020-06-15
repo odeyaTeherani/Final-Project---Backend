@@ -51,7 +51,8 @@ namespace backend.Business.Services
         // registerAsync
         public async Task<UserInformationDto> RegisterAsync(UserInformationDto model)
         {
-            var roleExistResult = _roleManager.RoleExistsAsync(model.Role); // check if the role exist
+            var roleExistResult = 
+                _roleManager.RoleExistsAsync(model.Role); // check if the role exist
             if (!roleExistResult.Result) throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
@@ -61,7 +62,8 @@ namespace backend.Business.Services
                 Email = model.Email,
                 FirstName = model.FirstName,
                 LastName = model.LastName,
-                PhoneNumber = model.PhoneNumber
+                PhoneNumber = model.PhoneNumber,
+                SubRoleId = model.SubRole.Id
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
