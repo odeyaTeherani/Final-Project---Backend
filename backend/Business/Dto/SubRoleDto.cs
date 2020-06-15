@@ -4,9 +4,9 @@ namespace backend.Business.Dto
 {
     public class SubRoleDto
     {
-        public int Id { get; set; }  
+        public int Id { get; set; }
         
         [JsonProperty("subRole")]
-        public string SubRole { get; set; }
+        public string Name { get; set; }
     }
 }

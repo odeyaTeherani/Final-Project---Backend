@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace backend.Migrations
 {
-    public partial class noteInEvent : Migration
+    public partial class SubRole : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,6 +93,43 @@ namespace backend.Migrations
                 table: "Events",
                 nullable: true);
 
+            migrationBuilder.AddColumn<string>(
+                name: "Image",
+                table: "AspNetUsers",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "SubRoleId",
+                table: "AspNetUsers",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.CreateTable(
+                name: "SubRoles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SubRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AspNetUsers_SubRoleId",
+                table: "AspNetUsers",
+                column: "SubRoleId");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AspNetUsers_SubRoles_SubRoleId",
+                table: "AspNetUsers",
+                column: "SubRoleId",
+                principalTable: "SubRoles",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
             migrationBuilder.AddForeignKey(
                 name: "FK_Events_EventTypes_EventTypeId",
                 table: "Events",
@@ -105,12 +142,31 @@ namespace backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
+                name: "FK_AspNetUsers_SubRoles_SubRoleId",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropForeignKey(
                 name: "FK_Events_EventTypes_EventTypeId",
                 table: "Events");
+
+            migrationBuilder.DropTable(
+                name: "SubRoles");
+
+            migrationBuilder.DropIndex(
+                name: "IX_AspNetUsers_SubRoleId",
+                table: "AspNetUsers");
 
             migrationBuilder.DropColumn(
                 name: "Note",
                 table: "Events");
+
+            migrationBuilder.DropColumn(
+                name: "Image",
+                table: "AspNetUsers");
+
+            migrationBuilder.DropColumn(
+                name: "SubRoleId",
+                table: "AspNetUsers");
 
             migrationBuilder.AlterColumn<int>(
                 name: "SeverityLevelType",

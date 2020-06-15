@@ -33,7 +33,7 @@ namespace backend.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> AddNewSubRoleAsync([FromBody] SubRoleDto newSubRole)
+        public async Task<IActionResult> AddNewSubRoleAsync(string newSubRole)
         {
             if (newSubRole == null) throw new CustomException($"The new sub role is empty");
             var result = await _subRoleService.AddNewSubRoleAsync(newSubRole);

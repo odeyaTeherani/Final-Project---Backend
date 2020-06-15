@@ -36,12 +36,12 @@ namespace backend.Business.Services
             return _mapper.Map<SubRoleDto>(result);
         }
 
-        public async Task<SubRoleDto> AddNewSubRoleAsync(SubRoleDto newSubRole)
+        public async Task<SubRoleDto> AddNewSubRoleAsync(string newSubRole)
         {
-            var mapperSubRole = _mapper.Map<SubRole>(newSubRole);
-            await _context.SubRoles.AddAsync(mapperSubRole);
+            var newSub = new SubRole {Name = newSubRole.Trim()};
+            await _context.SubRoles.AddAsync(newSub);
             await _context.SaveChangesAsync();
-            return _mapper.Map<SubRoleDto>(mapperSubRole);
+            return _mapper.Map<SubRoleDto>(newSub);
         }
 
         public async Task<SubRoleDto> UpdateSubRoleAsync(int id, SubRoleDto updateSubRole)
@@ -51,7 +51,7 @@ namespace backend.Business.Services
             if (result == null) 
                 throw new CustomException($"Sub Role whit id {id} not found", HttpStatusCode.NotFound);
             
-            result.Name = updateSubRole.SubRole;
+            result.Name = updateSubRole.Name;
 
             await _context.SaveChangesAsync();
             return _mapper.Map<SubRoleDto>(result);

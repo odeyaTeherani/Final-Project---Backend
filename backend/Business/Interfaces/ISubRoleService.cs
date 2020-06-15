@@ -9,7 +9,7 @@ namespace backend.Business.Interfaces
     {
         Task<List<SubRoleDto>> GetAllAsync();
         Task<SubRoleDto> GetByIdAsync(int id);
-        Task<SubRoleDto> AddNewSubRoleAsync([FromBody] SubRoleDto newEventType);
+        Task<SubRoleDto> AddNewSubRoleAsync(string newEventType);
         Task<SubRoleDto> UpdateSubRoleAsync(int id, [FromBody] SubRoleDto updateEventType);
         Task DeleteAsync(int id);
     }
