@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Business.Dto;
+using backend.Data.Enums;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Business.Interfaces
 {
     public interface IEventService
     {
-        Task<List<EventDto>> GetAllAsync();
+        Task<List<EventDto>> GetAllAsync(DateTime? date = null,int? eventTypeId= null,SeverityLevel? severityLevel = null);
         Task<EventDto> GetByIdAsync(int id);
         Task<EventDto> AddNewEventAsync([FromBody] EventDto newEvent, string userName);
         Task UpdateEventAsync(int id, EventDto updateEvent);

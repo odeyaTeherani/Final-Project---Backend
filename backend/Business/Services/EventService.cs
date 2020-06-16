@@ -9,6 +9,7 @@ using backend.Business.Helpers;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
+using backend.Data.Enums;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,12 +33,24 @@ namespace backend.Business.Services
         /// Get all events
         /// </summary>
         /// <returns>List of all events</returns>
-        public async Task<List<EventDto>> GetAllAsync()
+        public async Task<List<EventDto>> GetAllAsync(DateTime? date = null,int? eventTypeId= null,SeverityLevel? severityLevel = null)
         {
-            var all = await GetEvent()
-                .ToListAsync();
-             var orderByDescending = all.OrderByDescending(e => e.StartDate);
-            return _mapper.Map<List<EventDto>>(orderByDescending);
+            if (ShouldFilter(date, eventTypeId, severityLevel))
+            {
+                var all = await GetEvent()
+                    .Filter(date, eventTypeId, severityLevel)
+                    .ToListAsync();
+
+                var orderByDescending = all.OrderByDescending(e => e.StartDate);
+                return _mapper.Map<List<EventDto>>(orderByDescending);   
+            }
+            else
+            {
+                var all = await GetEvent()
+                    .ToListAsync();
+                var orderByDescending = all.OrderByDescending(e => e.StartDate);
+                return _mapper.Map<List<EventDto>>(orderByDescending);   
+            }
         }
 
         public async Task<EventDto> GetByIdAsync(int id)
@@ -100,6 +113,13 @@ namespace backend.Business.Services
         private IQueryable<Event> GetEvent()
         {
             return _queryHelper.GetAllIncluding(x => x.EventType, x => x.Images, x => x.Location);
+        }
+        
+     
+
+        private bool ShouldFilter(DateTime? date = null,int? eventTypeId= null,SeverityLevel? severityLevel = null)
+        {
+            return date.HasValue || eventTypeId.HasValue || severityLevel.HasValue;
         }
     }
 }
