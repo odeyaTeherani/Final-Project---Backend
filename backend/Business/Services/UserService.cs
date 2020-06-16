@@ -34,19 +34,23 @@ namespace backend.Business.Services
             var orderByDescending = all.OrderByDescending(e => e.LastName);
             return _mapper.Map<List<UserInformationDto>>(orderByDescending);
         }
-        
+
         public async Task<UserInformationDto> GetByIdAsync(string id)
         {
-            var result = await _userManager.FindByIdAsync(id);
-            if (result == null) 
+            var result = await _userManager
+                .Users
+                .Include(x => x.SubRole)
+                .SingleOrDefaultAsync(x => x.Id == id);
+            
+            if (result == null)
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
             return _mapper.Map<UserInformationDto>(result);
         }
-        
+
         public async Task UpdateUserAsync(UserInformationDto model, string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) 
+            if (user == null)
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
             // Update it with the values from the view model
             user.FirstName = model.FirstName;
@@ -55,11 +59,11 @@ namespace backend.Business.Services
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
             user.Image = model.Image;
-            
+
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles);
             await _userManager.AddToRoleAsync(user, model.Role);
-            
+
             // Apply the changes if any to the db
             IdentityResult result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
@@ -69,7 +73,7 @@ namespace backend.Business.Services
         public async Task DeleteAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
-            if (user == null) 
+            if (user == null)
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
             _context.Remove(user);
             await _context.SaveChangesAsync();
