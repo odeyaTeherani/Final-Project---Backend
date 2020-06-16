@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
+using backend.Data.Enums;
+using backend.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -19,10 +22,10 @@ namespace backend.Controllers
 
         // https://localhost:44341/event
         [HttpGet]
-        public async Task<List<EventDto>> Get()
+        public async Task<List<EventDto>> Get(DateTime? date = null,int? eventTypeId= null,SeverityLevel? severityLevel = null)
         {
             // consider to implement paging mechanism 
-            return await _eventService.GetAllAsync();
+            return await _eventService.GetAllAsync(date,eventTypeId,severityLevel);
         }
 
         // https://localhost:44341/event/{id}

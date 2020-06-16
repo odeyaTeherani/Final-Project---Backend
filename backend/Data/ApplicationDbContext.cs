@@ -35,6 +35,27 @@ namespace backend.Data
                     }
                 });
 
+            builder.Entity<SubRole>()
+                .HasData(new List<SubRole>
+                {
+                    new SubRole
+                    {
+                        Id = 1,
+                        Name = "Police"
+                    },
+                    new SubRole
+                    {
+                        Id = 2,
+                        Name = "Fire Fighter"
+                    },
+                    new SubRole
+                    {
+                        Id = 3,
+                        Name = "Paramedic"
+                    }
+                });
+            
+            
             builder.Entity<Report>()
                 .HasOne(x => x.User)
                 .WithMany()
