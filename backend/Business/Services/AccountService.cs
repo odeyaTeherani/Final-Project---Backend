@@ -63,7 +63,8 @@ namespace backend.Business.Services
                 FirstName = model.FirstName,
                 LastName = model.LastName,
                 PhoneNumber = model.PhoneNumber,
-                SubRoleId = model.SubRole.Id
+                SubRoleId = model.SubRole.Id,
+                Image = model.Image
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);

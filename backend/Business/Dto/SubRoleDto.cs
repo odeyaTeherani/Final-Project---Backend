@@ -6,7 +6,6 @@ namespace backend.Business.Dto
     {
         public int Id { get; set; }
         
-        [JsonProperty("subRole")]
         public string Name { get; set; }
     }
 }
