@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace backend.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class EventTypeController : ControllerBase
     {
         private readonly IEventTypeService _eventTypeService;
@@ -29,7 +29,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             var result = await _eventTypeService.GetByIdAsync(id);
             return Ok(result);
@@ -38,11 +38,11 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType
         [HttpPost]
-        public async Task<IActionResult> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType)
+        public async Task<IActionResult> AddNewEventTypeAsync(string newEventType)
         {
             if (newEventType == null) throw new CustomException($"The new event type is empty");
             var result = await _eventTypeService.AddNewEventTypeAsync(newEventType);
-            return CreatedAtAction("GetByIdAsync", new {id = result.Id}, result);
+            return CreatedAtAction(nameof(GetById), new {id = result.Id}, result);
         }
 
 
@@ -59,10 +59,10 @@ namespace backend.Controllers
 
         // https://localhost:44341/eventType/{id}
         [HttpDelete("{id}")]
-        public IActionResult DeleteAsync(int id)
+        public async Task<IActionResult> DeleteAsync(int id)
         {
 
-            _eventTypeService.DeleteAsync(id);
+            await _eventTypeService.DeleteAsync(id);
             return Ok();
         }
     }

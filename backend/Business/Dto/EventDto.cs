@@ -9,7 +9,7 @@ namespace backend.Business.Dto
 {
     public class EventDto
     {
-        public int Id { get; set; } //primary key
+        public int? Id { get; set; } //primary key
         
         public EventTypeDto EventType { get; set; }
         
@@ -49,7 +49,13 @@ namespace backend.Business.Dto
         public int NumOfZakaCars { get; set; }
         
         [JsonProperty("nameInCharge")]
-        public string NameInCharge { get; set; }
+        public string NameInCharge { get; set; }        
+        
+        [JsonProperty("note")]
+        public string Note { get; set; }
+        
+        public List<string> Images { get; set; }
+        
         public List<ReportDto> Reports { get; set; }
     }
 }

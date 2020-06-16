@@ -7,7 +7,6 @@ namespace backend.Business.Dto.ReportDtoModels
     {
 
         public GetBasicUserInformation User { get; set; }
-        public string EventType { get; set; }
         public DateTime Date { get; set; }
 
     }

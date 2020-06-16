@@ -9,8 +9,8 @@ namespace backend.Business.Interfaces
     {
         Task<List<EventTypeDto>> GetAllAsync();
         Task<EventTypeDto> GetByIdAsync(int id);
-        Task<EventTypeDto> AddNewEventTypeAsync([FromBody] EventTypeDto newEventType);
+        Task<EventTypeDto> AddNewEventTypeAsync([FromBody] string newEventType);
         Task<EventTypeDto> UpdateEventTypeAsync(int id, [FromBody] EventTypeDto updateEventType);
-        void DeleteAsync(int id);
+        Task DeleteAsync(int id);
     }
 }

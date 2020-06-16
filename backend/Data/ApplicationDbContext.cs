@@ -14,9 +14,8 @@ namespace backend.Data
 
         public DbSet<Event> Events { get; set; } // reference to the Database - list that represents a table of events in the database
         public DbSet<Report> Reports { get; set; } // reference to the Database - list that represents a table of reports in the database
-        public DbSet<EventType> EventTypes { get; set; } // reference to the Database - list that represents a table of reports in the database
-
-
+        public DbSet<EventType> EventTypes { get; set; } // reference to the Database - list that represents a table of EventTypes in the database
+        public DbSet<SubRole> SubRoles { get; set; } // reference to the Database - list that represents a table of SubRoles in the database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -36,6 +35,27 @@ namespace backend.Data
                     }
                 });
 
+            builder.Entity<SubRole>()
+                .HasData(new List<SubRole>
+                {
+                    new SubRole
+                    {
+                        Id = 1,
+                        Name = "Police"
+                    },
+                    new SubRole
+                    {
+                        Id = 2,
+                        Name = "Fire Fighter"
+                    },
+                    new SubRole
+                    {
+                        Id = 3,
+                        Name = "Paramedic"
+                    }
+                });
+            
+            
             builder.Entity<Report>()
                 .HasOne(x => x.User)
                 .WithMany()

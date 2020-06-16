@@ -19,12 +19,14 @@ namespace backend.Business.Dto
             return new MapperConfiguration((cfg) =>
                 {
                     cfg.CreateMap<Report, ReportDto>();
-                    cfg.CreateMap<ReportDto, Report>();
+                    // cfg.CreateMap<ReportDto, Report>();
                   
 
-                    cfg.CreateMap<AddReportDto, Report>()
+                    cfg.CreateMap<ReportDto, Report>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
+                        .ForMember(x=>x.EventType,
+                            opt=>opt.Ignore())
                         .AfterMap((reportDto, report) =>
                         {
                             report.Images.AddRange(reportDto.Images.Select(imageData => new Image
@@ -33,28 +35,60 @@ namespace backend.Business.Dto
                                     ImageData = imageData
                                 }).ToList()
                             );
+                            report.EventTypeId = reportDto.EventType.Id;
+                  
                         });
 
 
                     cfg.CreateMap<Report, GetReportDto>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
-                        .ForMember(x => x.EventType,
+                        // .ForMember(x => x.EventType, opt => opt.Ignore())
+                        .AfterMap((report, reportDto) =>
+                        {
+                            reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
+                            // reportDto.EventType.Type = report.EventType?.Type;
+                        });
+
+                    cfg.CreateMap<EventType, EventTypeDto>();
+                    cfg.CreateMap<EventTypeDto, EventType>();                     
+                    
+                    cfg.CreateMap<SubRole, SubRoleDto>();
+                    cfg.CreateMap<SubRoleDto, SubRole>();
+
+                    cfg.CreateMap<UserInformationDto, ApplicationUser>()
+                        .ForMember(s => s.SubRole,
+                            opt => opt.Ignore())
+                        .AfterMap((subRoleDto, subRole ) =>
+                        {
+                            subRole.SubRoleId = subRoleDto.SubRole.Id;
+                        });
+
+                    cfg.CreateMap<ApplicationUser, UserInformationDto>();
+                    
+                    cfg.CreateMap<Event, EventDto>()
+                        .ForMember(x => x.Images,
                             opt => opt.Ignore())
                         .AfterMap((report, reportDto) =>
                         {
                             reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
-                            reportDto.EventType = report.EventType?.Type;
                         });
-
-                    cfg.CreateMap<EventType, EventTypeDto>();
-                    cfg.CreateMap<EventTypeDto, EventType>();
-                    cfg.CreateMap<Event, EventDto>();
                     cfg.CreateMap<EventDto, Event>()
-                        .ForMember(x=>x.EventType,opt => opt.Ignore())
+                        .ForMember(x => x.Images,
+                            opt => opt.Ignore())
+                        .ForMember(x=>x.EventType,
+                            opt => opt.Ignore())
+                        .ForMember(x=>x.Id,
+                            opt => opt.Ignore())
                         .AfterMap((dto, e) =>
                         {
                             e.EventTypeId = dto.EventType.Id;
+                            e.Images.AddRange(dto.Images.Select(imageData => new Image
+                                {
+                                    Id = Guid.NewGuid(),
+                                    ImageData = imageData
+                                }).ToList()
+                            );
                   
                         });
                     cfg.CreateMap<LocationDto, Location>();

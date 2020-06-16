@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto.ReportDtoModels;
+using backend.Business.Helpers;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
@@ -17,48 +18,42 @@ namespace backend.Business.Services
     {
         private readonly ApplicationDbContext _context; //variable that represents the Database
         private readonly IMapper _mapper;
-        
+        private readonly QueryHelper<Report> _queryHelper;
+
         public ReportService(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _queryHelper = new QueryHelper<Report>(_context);
         }
 
         public async Task<List<GetReportDto>> GetAllAsync(bool isAdmin,string userName)
         {
             List<Report> all;
             if(isAdmin)
-                 all = await _context.Reports
-                     .Include(x => x.User)
-                     .Include(x=>x.EventType)
-                     .Include(x=>x.Location)
+                 all = await GetReport()
                      .ToListAsync();
             else
             {
-                all = await _context.Reports
-                    .Include(x => x.User)
-                    .Include(x=>x.EventType)
-                    .Include(x=>x.Location)
+                all = await GetReport()
                     .Where(report => report.UserId.Equals(userName))
                     .ToListAsync();
             }
-            return _mapper.Map<List<GetReportDto>>(all.OrderByDescending(report => report.Date));
+            var orderByDescending = all.OrderByDescending(r => r.Date);
+            return _mapper.Map<List<GetReportDto>>(orderByDescending);
         }
 
         public async Task<GetReportDto> GetByIdAsync(int id)
         {
             var result = await 
-                _context.Reports
-                    .Include(x=>x.User)
+                GetReport()                    
                     .Include(x=>x.Images)
-                    .Include(x => x.EventType)
-                    .Include(x=> x.Location)
-                .SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
+                    .SingleOrDefaultAsync(e => e.Id == id); // Make sure it is single and if you didn't find return null
             if (result == null) throw new CustomException($"Report whit id {id} not found",HttpStatusCode.NotFound );
             return _mapper.Map<GetReportDto>(result);
         }
 
-        public async Task<GetReportDto> AddNewReportAsync(AddReportDto newReport,string userName)
+        public async Task<GetReportDto> AddNewReportAsync(ReportDto newReport,string userName)
         {
             var mapperReport = _mapper.Map<Report>(newReport);
             mapperReport.Date = DateTime.Now;
@@ -92,7 +87,10 @@ namespace backend.Business.Services
             _context.Reports.Remove(result);
             await _context.SaveChangesAsync();
         }
-        
+        private IQueryable<Report> GetReport()
+        {
+            return _queryHelper.GetAllIncluding(x => x.User, x => x.EventType, x => x.Location);
+        }
         
     }
 }

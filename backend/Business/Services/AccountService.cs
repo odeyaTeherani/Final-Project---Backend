@@ -6,10 +6,12 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Dto.UserDto;
 using backend.Business.Interfaces;
 using backend.Controllers;
+using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -20,31 +22,37 @@ namespace backend.Business.Services
 {
     public class AccountService : IAccountService
     {
-
+        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager; // All about the user
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly RoleManager<IdentityRole> _roleManager; // Allow to edit role
+        private readonly IMapper _mapper;
 
         public AccountService(
+            ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IConfiguration configuration,
             ILoggerFactory loggerFactory,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+        IMapper mapper)
         {
+            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = loggerFactory.CreateLogger<AccountService>();
             _configuration = configuration;
             _roleManager = roleManager;
+            _mapper = mapper;
         }
 
         // registerAsync
         public async Task<UserInformationDto> RegisterAsync(UserInformationDto model)
         {
-            var roleExistResult = _roleManager.RoleExistsAsync(model.Role); // check if the role exist
+            var roleExistResult = 
+                _roleManager.RoleExistsAsync(model.Role); // check if the role exist
             if (!roleExistResult.Result) throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
@@ -53,7 +61,9 @@ namespace backend.Business.Services
                 UserName = model.UserName,
                 Email = model.Email,
                 FirstName = model.FirstName,
-                LastName = model.LastName
+                LastName = model.LastName,
+                PhoneNumber = model.PhoneNumber,
+                SubRoleId = model.SubRole.Id
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -108,18 +118,19 @@ namespace backend.Business.Services
             return result;
         }
 
-        public async Task<IdentityResult> UpdateUserAsync(UserInformationDto model)
+        public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,ClaimsPrincipal userPrincipal)
         {
             // Get the existing user from the db
-            var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
+            var user = await _userManager.GetUserAsync(userPrincipal);
             if (user == null)
-                throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
+                throw new CustomException($"Unable to load user with ID'.");
 
             // Update it with the values from the view model
             user.FirstName = model.FirstName;
             user.LastName = model.LastName;
             user.UserName = model.UserName;
             user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
 
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles);
@@ -131,6 +142,25 @@ namespace backend.Business.Services
                 throw new CustomException($"Unable to update.");
             
             return result;
+        }
+        
+        public async Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
+        {
+            var result = await _userManager.GetUserAsync(userPrincipal);
+            // var role = await _userManager.GetRolesAsync(result);
+            // result.Role = role;
+            if (result == null) 
+                throw new CustomException($"User not found", HttpStatusCode.NotFound);
+            return _mapper.Map<UserInformationDto>(result);
+        }
+
+        public async Task DeleteCurrentAccountAsync(ClaimsPrincipal userPrincipal)
+        {
+            var result = await _userManager.GetUserAsync(userPrincipal);
+            if (result == null)
+                throw new CustomException($"User not found", HttpStatusCode.NotFound);
+            await _userManager.DeleteAsync(result);
+            await _context.SaveChangesAsync();
         }
 
 
@@ -145,7 +175,7 @@ namespace backend.Business.Services
                 //new Claim("lastName", user.LastName),
                 //new Claim("firstName", user.FirstName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                // new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
                 new Claim("email",user.Email)
             };
 

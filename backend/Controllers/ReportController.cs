@@ -50,7 +50,7 @@ namespace backend.Controllers
 
         // https://localhost:44341/report
         [HttpPost]
-        public async Task<IActionResult> AddNewReport([FromBody] AddReportDto newReport)
+        public async Task<IActionResult> AddNewReport([FromBody] ReportDto newReport)
         {
             var username = User.FindFirst("Sub")?.Value;
             if (newReport == null) throw new CustomException($"The new report is empty");
@@ -58,8 +58,6 @@ namespace backend.Controllers
             return CreatedAtAction("GetById", new { id = result.Id }, result);
         }
 
-
-        // One of the parameters are empty
         // https://localhost:44341/report/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateReport(int id, [FromBody] ReportDto updateReport)

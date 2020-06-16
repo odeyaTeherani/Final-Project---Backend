@@ -22,7 +22,6 @@ namespace backend.Data.Models
         [ForeignKey("EventTypeId")]
         public int? EventTypeId { get; set; }
         public EventType? EventType { get; set; }
-
         public SeverityLevel? SeverityLevelType { get; set; }
 
         [ForeignKey("LocationId")]
@@ -40,6 +39,7 @@ namespace backend.Data.Models
         public int? NumOfEnvironment { get; set; }
         public int? NumOfZakaCars { get; set; }
         public string? NameInCharge { get; set; }
+        public string? Note { get; set; }
         public List<Report>? Reports { get; set; }
         public List<Image>? Images { get; set; }
 
