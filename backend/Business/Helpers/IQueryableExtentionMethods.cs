@@ -7,7 +7,8 @@ namespace backend.Business.Helpers
 {
     public static class QueryableExtensionMethods
     {
-        public static IQueryable<Event> FilterEvents(this IQueryable<Event> queryable, DateTime? date = null, int? eventTypeId = null, SeverityLevel? severityLevel = null)
+        public static IQueryable<Event> FilterEvents(this IQueryable<Event> queryable, DateTime? date = null,
+            int? eventTypeId = null, SeverityLevel? severityLevel = null)
         {
             if (date.HasValue)
             {
@@ -15,13 +16,13 @@ namespace backend.Business.Helpers
                     x.StartDate.Date <= date.Value.Date &&
                     date.Value.Date <= x.EndDate.Value.Date);
             }
-            
+
             if (eventTypeId.HasValue)
             {
                 queryable = queryable.Where(x =>
                     x.EventTypeId.HasValue && x.EventTypeId.Value == eventTypeId.Value);
             }
-            
+
             if (severityLevel.HasValue)
             {
                 queryable = queryable.Where(x =>
@@ -30,21 +31,21 @@ namespace backend.Business.Helpers
 
             return queryable;
         }
-        
-        public static IQueryable<ApplicationUser> FilterUsers(this IQueryable<ApplicationUser> queryable, string name = null, string email = null, int? subRoleId = null)
+
+        public static IQueryable<ApplicationUser> FilterUsers(this IQueryable<ApplicationUser> queryable,
+            string name = null, string email = null, int? subRoleId = null)
         {
             if (name != null)
             {
                 queryable = queryable.Where(x =>
                     x.FirstName == name || x.LastName == name);
             }
-            
+
             if (email != null)
             {
-                queryable = queryable.Where(x =>
-                    x.Email == email);
+                queryable = queryable.Where(x => x.Email.Contains(email.Trim()));
             }
-            
+
             if (subRoleId.HasValue)
             {
                 queryable = queryable.Where(x =>
