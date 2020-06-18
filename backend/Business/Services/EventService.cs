@@ -38,7 +38,7 @@ namespace backend.Business.Services
             if (ShouldFilter(date, eventTypeId, severityLevel))
             {
                 var all = await GetEvent()
-                    .Filter(date, eventTypeId, severityLevel)
+                    .FilterEvents(date, eventTypeId, severityLevel)
                     .ToListAsync();
 
                 var orderByDescending = all.OrderByDescending(e => e.StartDate);

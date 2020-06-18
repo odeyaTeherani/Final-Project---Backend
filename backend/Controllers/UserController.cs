@@ -19,9 +19,9 @@ namespace backend.Controllers
         }
         
         [HttpGet]
-        public async Task<List<UserInformationDto>> Get()
+        public async Task<List<UserInformationDto>> Get(string name = null, string email = null,int? subRoleId = null)
         {
-            return await _userService.GetAllAsync();
+            return await _userService.GetAllAsync(name, email, subRoleId);
         }
         
 

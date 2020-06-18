@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using backend.Business.Dto.UserDto;
+using backend.Business.Helpers;
 using backend.Business.Interfaces;
 using backend.Controllers;
 using backend.Data;
@@ -28,11 +29,21 @@ namespace backend.Business.Services
             _userManager = userManager;
         }
 
-        public async Task<List<UserInformationDto>> GetAllAsync()
+        public async Task<List<UserInformationDto>> GetAllAsync(string name = null, string email = null, int? subRoleId = null)
         {
-            var all = await _userManager.Users.ToListAsync();
-            var orderByDescending = all.OrderByDescending(e => e.LastName);
-            return _mapper.Map<List<UserInformationDto>>(orderByDescending);
+            if (ShouldFilter(name, email, subRoleId))
+            {
+                var all = await _userManager.Users.
+                    FilterUsers(name,email,subRoleId).ToListAsync();
+                var orderByDescending = all.OrderByDescending(e => e.LastName);
+                return _mapper.Map<List<UserInformationDto>>(orderByDescending);
+            }
+            else
+            {
+                var all = await _userManager.Users.ToListAsync();
+                var orderByDescending = all.OrderByDescending(e => e.LastName);
+                return _mapper.Map<List<UserInformationDto>>(orderByDescending);
+            }
         }
 
         public async Task<UserInformationDto> GetByIdAsync(string id)
@@ -77,6 +88,11 @@ namespace backend.Business.Services
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
             _context.Remove(user);
             await _context.SaveChangesAsync();
+        }
+
+        private bool ShouldFilter(string name = null, string email = null, int? subRoleId = null)
+        {
+            return subRoleId.HasValue || name != null || email != null;
         }
     }
 }
