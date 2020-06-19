@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
 namespace backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200619102309_GoogleApiLocationData")]
+    partial class GoogleApiLocationData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -357,19 +359,19 @@ namespace backend.Migrations
                     b.Property<string>("FormattedAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("GoogleLatitude")
+                    b.Property<double>("GoogleLatitude")
                         .HasColumnType("float");
 
-                    b.Property<double?>("GoogleLongitude")
+                    b.Property<double>("GoogleLongitude")
                         .HasColumnType("float");
 
                     b.Property<string>("GooglePlacesDbId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("Latitude")
+                    b.Property<double>("Latitude")
                         .HasColumnType("float");
 
-                    b.Property<double?>("Longitude")
+                    b.Property<double>("Longitude")
                         .HasColumnType("float");
 
                     b.Property<string>("Name")
