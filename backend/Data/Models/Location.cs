@@ -13,7 +13,21 @@ namespace backend.Data.Models
         [Key] // "Id" is primary key (uniq)
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // The "Id" will be managed automatically
         public int Id { get; set; } //primary key
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        
+        /// <summary>
+        ///  Sensors Location
+        /// </summary>
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
+        
+        /// <summary>
+        /// Google places api location data
+        /// </summary>
+        public string FormattedAddress { get; set; }
+        public double? GoogleLatitude { get; set; }
+        public double? GoogleLongitude { get; set; }
+        public string GooglePlacesDbId { get; set; }
+        public string Name { get; set; }
+        public string PlaceId { get; set; }
     }
 }

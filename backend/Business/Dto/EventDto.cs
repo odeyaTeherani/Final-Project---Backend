@@ -13,7 +13,7 @@ namespace backend.Business.Dto
         
         public EventTypeDto EventType { get; set; }
         
-        // public Location Location { get; set; }
+        public LocationDto Location { get; set; }
         
         [JsonProperty("severityLevel")]
         public SeverityLevel SeverityLevelType { get; set; }

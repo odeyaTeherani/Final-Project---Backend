@@ -20,13 +20,13 @@ namespace backend.Business.Dto
                 {
                     cfg.CreateMap<Report, ReportDto>();
                     // cfg.CreateMap<ReportDto, Report>();
-                  
+
 
                     cfg.CreateMap<ReportDto, Report>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
-                        .ForMember(x=>x.EventType,
-                            opt=>opt.Ignore())
+                        .ForMember(x => x.EventType,
+                            opt => opt.Ignore())
                         .AfterMap((reportDto, report) =>
                         {
                             report.Images.AddRange(reportDto.Images.Select(imageData => new Image
@@ -36,7 +36,6 @@ namespace backend.Business.Dto
                                 }).ToList()
                             );
                             report.EventTypeId = reportDto.EventType.Id;
-                  
                         });
 
 
@@ -51,21 +50,18 @@ namespace backend.Business.Dto
                         });
 
                     cfg.CreateMap<EventType, EventTypeDto>();
-                    cfg.CreateMap<EventTypeDto, EventType>();                     
-                    
+                    cfg.CreateMap<EventTypeDto, EventType>();
+
                     cfg.CreateMap<SubRole, SubRoleDto>();
                     cfg.CreateMap<SubRoleDto, SubRole>();
 
                     cfg.CreateMap<UserInformationDto, ApplicationUser>()
                         .ForMember(s => s.SubRole,
                             opt => opt.Ignore())
-                        .AfterMap((subRoleDto, subRole ) =>
-                        {
-                            subRole.SubRoleId = subRoleDto.SubRole.Id;
-                        });
+                        .AfterMap((subRoleDto, subRole) => { subRole.SubRoleId = subRoleDto.SubRole.Id; });
 
                     cfg.CreateMap<ApplicationUser, UserInformationDto>();
-                    
+
                     cfg.CreateMap<Event, EventDto>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
@@ -76,9 +72,9 @@ namespace backend.Business.Dto
                     cfg.CreateMap<EventDto, Event>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
-                        .ForMember(x=>x.EventType,
+                        .ForMember(x => x.EventType,
                             opt => opt.Ignore())
-                        .ForMember(x=>x.Id,
+                        .ForMember(x => x.Id,
                             opt => opt.Ignore())
                         .AfterMap((dto, e) =>
                         {
@@ -89,10 +85,40 @@ namespace backend.Business.Dto
                                     ImageData = imageData
                                 }).ToList()
                             );
-                  
                         });
-                    cfg.CreateMap<LocationDto, Location>();
-                    cfg.CreateMap<Location, LocationDto>();
+
+                    cfg.CreateMap<LocationDto, Location>()
+                        .ForMember(x => x.GooglePlacesDbId, opt => opt.Ignore())
+                        .ForMember(x => x.Name, opt => opt.Ignore())
+                        .ForMember(x => x.FormattedAddress, opt => opt.Ignore())
+                        .ForMember(x => x.GoogleLatitude, opt => opt.Ignore())
+                        .ForMember(x => x.GoogleLongitude, opt => opt.Ignore())
+                        .ForMember(x => x.PlaceId, opt => opt.Ignore())
+                        .AfterMap((dto, loc) =>
+                        {
+                            if (dto.GooglePlacesData == null) return;
+                            loc.GooglePlacesDbId = dto.GooglePlacesData.GooglePlacesDbId;
+                            loc.Name = dto.GooglePlacesData.Name;
+                            loc.FormattedAddress = dto.GooglePlacesData.FormattedAddress;
+                            loc.GoogleLatitude = dto.GooglePlacesData.GoogleLatitude;
+                            loc.GoogleLongitude = dto.GooglePlacesData.GoogleLongitude;
+                            loc.PlaceId = dto.GooglePlacesData.PlaceId;
+                        });
+
+                    cfg.CreateMap<Location, LocationDto>()
+                        .ForMember(x => x.GooglePlacesData, x => x.Ignore())
+                        .AfterMap((loc, dto) =>
+                        {
+                            dto.GooglePlacesData = new GooglePlacesData
+                            {
+                                Name = loc.Name,
+                                FormattedAddress = loc.FormattedAddress,
+                                GoogleLatitude = loc.GoogleLatitude,
+                                GoogleLongitude = loc.GoogleLongitude,
+                                PlaceId = loc.PlaceId,
+                                GooglePlacesDbId = loc.GooglePlacesDbId
+                            };
+                        });
 
                     cfg.CreateMap<ApplicationUser, GetBasicUserInformation>();
                     //cfg.CreateMap<UserDto, User>();
