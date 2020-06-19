@@ -37,7 +37,7 @@ namespace backend.Business.Services
             IConfiguration configuration,
             ILoggerFactory loggerFactory,
             RoleManager<IdentityRole> roleManager,
-        IMapper mapper)
+            IMapper mapper)
         {
             _context = context;
             _userManager = userManager;
@@ -51,9 +51,13 @@ namespace backend.Business.Services
         // registerAsync
         public async Task<UserInformationDto> RegisterAsync(UserInformationDto model)
         {
-            var roleExistResult = 
-                _roleManager.RoleExistsAsync(model.Role); // check if the role exist
-            if (!roleExistResult.Result) throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
+            var roleExistResult = _roleManager.RoleExistsAsync(model.Role); // check if the role exist
+            if (!roleExistResult.Result)
+                throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
+
+            ValidateMatchPasswords(model);
+           
+            ValidateMinPasswordLength(model);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
             {
@@ -71,16 +75,37 @@ namespace backend.Business.Services
 
             if (result.Succeeded)
             {
-                var roleResult = _userManager.AddToRoleAsync(user, model.Role); // If the result succeeded we add the role to the user 
+                var roleResult =
+                    _userManager.AddToRoleAsync(user,
+                        model.Role); // If the result succeeded we add the role to the user 
 
                 if (roleResult.Result.Succeeded)
                 {
                     return model;
                 }
+
                 _logger.LogError("Failed to add user " + user.UserName + " into role " + model.Role);
             }
+
+            throw new CustomException(string.Join(',', result.Errors.Select(e => e.Description)));
             _logger.LogError("Failed to create user " + user.UserName);
             return null;
+        }
+
+        private static void ValidateMatchPasswords(UserInformationDto model)
+        {
+            if (!model.Password.Trim().Equals(model.ConfirmPassword.Trim()))
+                throw new CustomException("Passwords are not match");
+        }
+
+        private static void ValidateMinPasswordLength(UserInformationDto model)
+        {
+            if (model.Password.Trim().Length < Constants.MIN_PASSWORD_LENGTH)
+                throw new
+                    CustomException(
+                        $"The {model.Password.Trim()} must be at least" +
+                        $" {Constants.MIN_PASSWORD_LENGTH} and at max " +
+                        $"{Constants.MAX_PASSWORD_LENGTH} characters long");
         }
 
 
@@ -88,7 +113,9 @@ namespace backend.Business.Services
         public async Task<dynamic> LoginAsync(LoginDto model)
         {
             // signInManager if from the identity library
-            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, false, false); // send the email and the password and confirm the password - check if the user connect
+            var result =
+                await _signInManager.PasswordSignInAsync(model.Username, model.Password, false,
+                    false); // send the email and the password and confirm the password - check if the user connect
 
             if (!result.Succeeded) throw new CustomException($"User or Password are incorrect");
             var user = _userManager.Users.SingleOrDefault(r => r.UserName == model.Username);
@@ -98,7 +125,7 @@ namespace backend.Business.Services
                 throw new CustomException("User not assigned to any roles there for he cannot be logged in");
 
             var token = GenerateJwtToken(user, roles); // Creating user token
-            return new { token, roles };
+            return new {token, roles};
         }
 
 
@@ -107,7 +134,8 @@ namespace backend.Business.Services
         {
             var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
             if (user == null)
-                throw new CustomException($"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
+                throw new CustomException(
+                    $"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
 
             var result =
                 await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
@@ -116,10 +144,12 @@ namespace backend.Business.Services
                 // var errors = result.Errors.Select(x => x.Description);
                 throw new CustomException($"Change Password failed");
             }
+
             return result;
         }
 
-        public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,ClaimsPrincipal userPrincipal)
+        public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,
+            ClaimsPrincipal userPrincipal)
         {
             // Get the existing user from the db
             var user = await _userManager.GetUserAsync(userPrincipal);
@@ -141,16 +171,16 @@ namespace backend.Business.Services
             IdentityResult result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
                 throw new CustomException($"Unable to update.");
-            
+
             return result;
         }
-        
+
         public async Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
         {
             var result = await _userManager.GetUserAsync(userPrincipal);
             // var role = await _userManager.GetRolesAsync(result);
             // result.Role = role;
-            if (result == null) 
+            if (result == null)
                 throw new CustomException($"User not found", HttpStatusCode.NotFound);
             return _mapper.Map<UserInformationDto>(result);
         }
@@ -177,17 +207,21 @@ namespace backend.Business.Services
                 //new Claim("firstName", user.FirstName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id),
-                new Claim("email",user.Email)
+                new Claim("email", user.Email)
             };
 
             claims.AddRange(userRole.Select(role => new Claim("roles", role))); // required
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256); // Adding security
-            var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"])); //"JwtExpireDays" days without login - Automatically disconnect the user 
+            var expires =
+                DateTime.Now.AddDays(
+                    Convert.ToDouble(
+                        _configuration[
+                            "JwtExpireDays"])); //"JwtExpireDays" days without login - Automatically disconnect the user 
 
             var token = new JwtSecurityToken( // create new token
-                _configuration["JwtIssuer"],  // token issuer name
+                _configuration["JwtIssuer"], // token issuer name
                 _configuration["JwtIssuer"],
                 claims,
                 expires: expires, // when this expire
@@ -202,12 +236,9 @@ namespace backend.Business.Services
             if (!_roleManager.RoleExistsAsync("admin").Result)
                 _roleManager.CreateAsync(new IdentityRole("admin")).Wait();
             if (!_roleManager.RoleExistsAsync("user").Result)
-                _roleManager.CreateAsync(new IdentityRole("user")).Wait();            
+                _roleManager.CreateAsync(new IdentityRole("user")).Wait();
             if (!_roleManager.RoleExistsAsync("developer").Result)
                 _roleManager.CreateAsync(new IdentityRole("developer")).Wait();
         }
     }
 }
-
-
-

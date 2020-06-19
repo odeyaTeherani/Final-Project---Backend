@@ -29,12 +29,14 @@ namespace backend.Business.Services
             _userManager = userManager;
         }
 
-        public async Task<List<UserInformationDto>> GetAllAsync(string name = null, string email = null, int? subRoleId = null)
+        public async Task<List<UserInformationDto>> GetAllAsync(string name = null, string email = null,
+            int? subRoleId = null)
         {
             if (ShouldFilter(name, email, subRoleId))
             {
-                var all = await _userManager.Users.
-                    FilterUsers(name,email,subRoleId).ToListAsync();
+                var all = await _userManager
+                    .Users
+                    .FilterUsers(name, email, subRoleId).ToListAsync();
                 var orderByDescending = all.OrderByDescending(e => e.LastName);
                 return _mapper.Map<List<UserInformationDto>>(orderByDescending);
             }
@@ -52,10 +54,14 @@ namespace backend.Business.Services
                 .Users
                 .Include(x => x.SubRole)
                 .SingleOrDefaultAsync(x => x.Id == id);
-            
+
             if (result == null)
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
-            return _mapper.Map<UserInformationDto>(result);
+
+            var roles = await _userManager.GetRolesAsync(result);
+            var mapped = _mapper.Map<UserInformationDto>(result);
+            mapped.Role = roles[0];
+            return mapped;
         }
 
         public async Task UpdateUserAsync(UserInformationDto model, string id)

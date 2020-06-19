@@ -4,6 +4,7 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using backend.Business;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Business.Services;
@@ -76,7 +77,7 @@ namespace backend
 
                     // Password settings
                     options.Password.RequireDigit = false; // Do charge numbers
-                    options.Password.RequiredLength = 6; // minimum length
+                    options.Password.RequiredLength = Constants.MIN_PASSWORD_LENGTH; // minimum length
                     options.Password.RequiredUniqueChars = 0; // how much special characters require
                     options.Password.RequireLowercase = false; // Do required lowercase
                     options.Password.RequireNonAlphanumeric = false; 
