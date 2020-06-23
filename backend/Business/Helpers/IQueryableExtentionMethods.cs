@@ -38,7 +38,7 @@ namespace backend.Business.Helpers
             if (name != null)
             {
                 queryable = queryable.Where(x =>
-                    x.FirstName == name || x.LastName == name);
+                    x.FirstName.Contains(name.Trim()) || x.LastName.Contains(name.Trim()));
             }
 
             if (email != null)

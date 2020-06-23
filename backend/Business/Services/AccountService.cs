@@ -55,9 +55,9 @@ namespace backend.Business.Services
             if (!roleExistResult.Result)
                 throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
-            ValidateMatchPasswords(model);
+            ValidateMatchPasswords(model.Password, model.ConfirmPassword);
            
-            ValidateMinPasswordLength(model);
+            ValidateMinPasswordLength(model.Password);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
             {
@@ -92,18 +92,18 @@ namespace backend.Business.Services
             return null;
         }
 
-        private static void ValidateMatchPasswords(UserInformationDto model)
+        private static void ValidateMatchPasswords(string password, string confirmPassword )
         {
-            if (!model.Password.Trim().Equals(model.ConfirmPassword.Trim()))
+            if (!password.Trim().Equals(confirmPassword.Trim()))
                 throw new CustomException("Passwords are not match");
         }
 
-        private static void ValidateMinPasswordLength(UserInformationDto model)
+        private static void ValidateMinPasswordLength(string password)
         {
-            if (model.Password.Trim().Length < Constants.MIN_PASSWORD_LENGTH)
+            if (password.Trim().Length < Constants.MIN_PASSWORD_LENGTH)
                 throw new
                     CustomException(
-                        $"The {model.Password.Trim()} must be at least" +
+                        $"The Password {password.Trim()} must be at least" +
                         $" {Constants.MIN_PASSWORD_LENGTH} and at max " +
                         $"{Constants.MAX_PASSWORD_LENGTH} characters long");
         }
@@ -130,12 +130,16 @@ namespace backend.Business.Services
 
 
         //change password - the user already connect
-        public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordDto model)
+        public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordDto model, ClaimsPrincipal userPrincipal)
         {
-            var user = await _userManager.GetUserAsync(ClaimsPrincipal.Current);
+            var user = await _userManager.GetUserAsync(userPrincipal);
             if (user == null)
                 throw new CustomException(
-                    $"Unable to load user with ID '{_userManager.GetUserId(ClaimsPrincipal.Current)}'.");
+                    $"Unable to load user with ID '{_userManager.GetUserId(userPrincipal)}'.");
+            
+            ValidateMatchPasswords(model.NewPassword, model.ConfirmNewPassword);
+           
+            ValidateMinPasswordLength(model.NewPassword);
 
             var result =
                 await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
