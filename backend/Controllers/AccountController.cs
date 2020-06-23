@@ -69,7 +69,7 @@ namespace backend.Controllers
         public async Task<IActionResult> ChangePasswordAsync([FromBody] ChangePasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
-            return Ok(await _account.ChangePasswordAsync(model));
+            return Ok(await _account.ChangePasswordAsync(model, User));
         }
 
 

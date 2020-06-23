@@ -20,13 +20,16 @@ namespace backend.Business.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly QueryHelper<ApplicationUser> _queryHelper;
 
-        public UserService(ApplicationDbContext context, IMapper mapper,
+        public UserService(ApplicationDbContext context,
+            IMapper mapper,
             UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;
             _userManager = userManager;
+            _queryHelper = new QueryHelper<ApplicationUser>(_context);
         }
 
         public async Task<List<UserInformationDto>> GetAllAsync(string name = null, string email = null,
@@ -34,15 +37,14 @@ namespace backend.Business.Services
         {
             if (ShouldFilter(name, email, subRoleId))
             {
-                var all = await _userManager
-                    .Users
+                var all = await GetUser()
                     .FilterUsers(name, email, subRoleId).ToListAsync();
                 var orderByDescending = all.OrderByDescending(e => e.LastName);
                 return _mapper.Map<List<UserInformationDto>>(orderByDescending);
             }
             else
             {
-                var all = await _userManager.Users.ToListAsync();
+                var all = await GetUser().ToListAsync();
                 var orderByDescending = all.OrderByDescending(e => e.LastName);
                 return _mapper.Map<List<UserInformationDto>>(orderByDescending);
             }
@@ -94,6 +96,11 @@ namespace backend.Business.Services
                 throw new CustomException($"User with id {id} not found", HttpStatusCode.NotFound);
             _context.Remove(user);
             await _context.SaveChangesAsync();
+        }
+
+        private IQueryable<ApplicationUser> GetUser()
+        {
+            return _queryHelper.GetAllIncluding(x => x.SubRole);
         }
 
         private bool ShouldFilter(string name = null, string email = null, int? subRoleId = null)
