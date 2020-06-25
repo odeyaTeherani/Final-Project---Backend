@@ -74,19 +74,13 @@ namespace backend.Controllers
 
 
         //reset password - forget Password - TODO - nice to have
-        /*[HttpPut("resetPassword")]
+        [HttpPut("resetPassword")]
         [AllowAnonymous]
-        private async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resertPasswordModel)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordModel)
         {
-            var user = _userManager.FindByNameAsync(resertPasswordModel.UserName).Result;
-            var result =
-                await _userManager.ResetPasswordAsync(user, resertPasswordModel.Token, resertPasswordModel.NewPassword);
-            if (result.Succeeded)
-            {
-                return Ok();
-            }
-            return BadRequest();
-        }*/
+            if (!ModelState.IsValid) return BadRequest();
+            return Ok(await _account.ResetPasswordAsync(resetPasswordModel));
+        }
 
     }
 

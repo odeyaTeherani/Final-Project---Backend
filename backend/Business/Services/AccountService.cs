@@ -14,6 +14,7 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -151,6 +152,24 @@ namespace backend.Business.Services
 
             return result;
         }
+        
+        public async Task<IdentityResult> ResetPasswordAsync([FromBody] ResetPasswordDto resetPasswordModel)
+        {
+            var user = _userManager.FindByNameAsync(resetPasswordModel.UserName).Result;
+            if (user == null)
+                throw new CustomException(
+                    $"Unable to load user with username '{resetPasswordModel.UserName}'.");
+            
+            ValidateMinPasswordLength(resetPasswordModel.NewPassword);
+            
+            var result =
+                await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.NewPassword);
+            if (!result.Succeeded)
+            {
+                throw new CustomException($"Reset Password failed");
+            }
+            return result;
+        }
 
         public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,
             ClaimsPrincipal userPrincipal)
@@ -197,6 +216,7 @@ namespace backend.Business.Services
             await _userManager.DeleteAsync(result);
             await _context.SaveChangesAsync();
         }
+        
 
 
         // Generate token 
