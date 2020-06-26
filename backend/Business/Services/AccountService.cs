@@ -57,7 +57,7 @@ namespace backend.Business.Services
                 throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
             ValidateMatchPasswords(model.Password, model.ConfirmPassword);
-           
+
             ValidateMinPasswordLength(model.Password);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
@@ -93,7 +93,7 @@ namespace backend.Business.Services
             return null;
         }
 
-        private static void ValidateMatchPasswords(string password, string confirmPassword )
+        private static void ValidateMatchPasswords(string password, string confirmPassword)
         {
             if (!password.Trim().Equals(confirmPassword.Trim()))
                 throw new CustomException("Passwords are not match");
@@ -137,9 +137,9 @@ namespace backend.Business.Services
             if (user == null)
                 throw new CustomException(
                     $"Unable to load user with ID '{_userManager.GetUserId(userPrincipal)}'.");
-            
+
             ValidateMatchPasswords(model.NewPassword, model.ConfirmNewPassword);
-           
+
             ValidateMinPasswordLength(model.NewPassword);
 
             var result =
@@ -152,23 +152,54 @@ namespace backend.Business.Services
 
             return result;
         }
-        
+
         public async Task<IdentityResult> ResetPasswordAsync([FromBody] ResetPasswordDto resetPasswordModel)
         {
             var user = _userManager.FindByNameAsync(resetPasswordModel.UserName).Result;
             if (user == null)
                 throw new CustomException(
                     $"Unable to load user with username '{resetPasswordModel.UserName}'.");
-            
+
             ValidateMinPasswordLength(resetPasswordModel.NewPassword);
-            
+
             var result =
                 await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.NewPassword);
             if (!result.Succeeded)
             {
                 throw new CustomException($"Reset Password failed");
             }
+
             return result;
+        }
+
+        public async Task<IdentityResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel)
+        {
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
+            // If the user is found AND Email is confirmed
+            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
+            {
+                // Generate the reset password token
+                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                // GeneratePasswordResetTokenAsync(user);
+
+                // Build the password reset link
+                var passwordResetLink = this.Url.Action("ResetPassword", "Account",
+                    new {email = forgotPasswordModel.Email, token = token},
+                    Protocol: Request.Url.Scheme);
+
+                await _userManager.SendEmailAsync(user.Id, 
+                    "Confirm your account", 
+                    "Please confirm your account by clicking this link: <a href=\"" 
+                    + passwordResetLink + "\">link</a>");
+                // Log the password reset link
+                _logger.Log(LogLevel.Warning, passwordResetLink);
+
+                // Send the user to Forgot Password Confirmation view
+                // return View("ForgotPasswordConfirmation");
+            }
+
+            throw new CustomException("Not Success");
         }
 
         public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,
@@ -216,7 +247,6 @@ namespace backend.Business.Services
             await _userManager.DeleteAsync(result);
             await _context.SaveChangesAsync();
         }
-        
 
 
         // Generate token 

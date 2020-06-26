@@ -62,7 +62,7 @@ namespace backend
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISubRoleService, SubRoleService>();
-
+            
             // Mapping Settings
             var mappingConfig = services.InitMappings();
             var mapper = mappingConfig.CreateMapper();
