@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Dto.UserDto;
@@ -14,9 +15,11 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using SendGrid.Helpers.Mail;
 
 namespace backend.Business.Services
 {
@@ -56,7 +59,7 @@ namespace backend.Business.Services
                 throw new CustomException($"The Role {model.Role} not found", HttpStatusCode.NotFound);
 
             ValidateMatchPasswords(model.Password, model.ConfirmPassword);
-           
+
             ValidateMinPasswordLength(model.Password);
 
             var user = new ApplicationUser // Create the user that we want if the role exist
@@ -92,7 +95,7 @@ namespace backend.Business.Services
             return null;
         }
 
-        private static void ValidateMatchPasswords(string password, string confirmPassword )
+        private static void ValidateMatchPasswords(string password, string confirmPassword)
         {
             if (!password.Trim().Equals(confirmPassword.Trim()))
                 throw new CustomException("Passwords are not match");
@@ -136,9 +139,9 @@ namespace backend.Business.Services
             if (user == null)
                 throw new CustomException(
                     $"Unable to load user with ID '{_userManager.GetUserId(userPrincipal)}'.");
-            
+
             ValidateMatchPasswords(model.NewPassword, model.ConfirmNewPassword);
-           
+
             ValidateMinPasswordLength(model.NewPassword);
 
             var result =
@@ -150,6 +153,51 @@ namespace backend.Business.Services
             }
 
             return result;
+        }
+
+        public async Task<IdentityResult> ResetPasswordAsync(ResetPasswordDto resetPasswordModel)
+        {
+            var user = _userManager.FindByNameAsync(resetPasswordModel.UserName).Result;
+            if (user == null)
+                throw new CustomException(
+                    $"Unable to load user with username '{resetPasswordModel.UserName}'.");
+            ValidateMatchPasswords(resetPasswordModel.Password, resetPasswordModel.ConfirmPassword);
+            ValidateMinPasswordLength(resetPasswordModel.Password);
+
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
+            if (!result.Succeeded)
+            {
+                throw new CustomException($"Reset Password failed");
+            }
+
+            return result;
+        }
+
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel)
+        {
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
+
+            // If the user is found AND Email is confirmed
+            if (user == null) throw new CustomException("Not Success");
+
+            // Generate the reset password token
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            Console.WriteLine(token);
+            var subject = "Forgot Password";
+            var to = new EmailAddress(user.Email, user.NormalizedUserName);
+            var bodyText = "Dear user, bla bla bla";
+            var bodyHtml = $"<a href='http://localhost:4200/sessions/resetPassword?token={HttpUtility.UrlEncode(token)}'>" +
+                           $"Dear user {user.NormalizedUserName}" +
+                           "In order to reset your password click here"+
+                           "</a>";
+                           
+
+            var sendEmailResult = await EmailService.SendEmail(to, subject, bodyText, bodyHtml);
+            Console.WriteLine(sendEmailResult.StatusCode);
+            if(sendEmailResult.StatusCode != HttpStatusCode.Accepted)
+                throw new CustomException("Send email process failed.");
+            return true;
         }
 
         public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,

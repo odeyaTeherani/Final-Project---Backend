@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Dto.UserDto;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Business.Interfaces
 {
@@ -14,6 +15,9 @@ namespace backend.Business.Interfaces
         Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model, ClaimsPrincipal user);
         Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal);
         Task DeleteCurrentAccountAsync(ClaimsPrincipal userPrincipal);
+        Task<IdentityResult> ResetPasswordAsync([FromBody] ResetPasswordDto resetPasswordModel);
+        Task<bool> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel);
+
         void SeedRoles();
     }
 }
