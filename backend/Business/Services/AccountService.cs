@@ -6,6 +6,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using AutoMapper;
 using backend.Business.Dto;
 using backend.Business.Dto.UserDto;
@@ -18,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using SendGrid.Helpers.Mail;
 
 namespace backend.Business.Services
 {
@@ -153,17 +155,16 @@ namespace backend.Business.Services
             return result;
         }
 
-        public async Task<IdentityResult> ResetPasswordAsync([FromBody] ResetPasswordDto resetPasswordModel)
+        public async Task<IdentityResult> ResetPasswordAsync(ResetPasswordDto resetPasswordModel)
         {
             var user = _userManager.FindByNameAsync(resetPasswordModel.UserName).Result;
             if (user == null)
                 throw new CustomException(
                     $"Unable to load user with username '{resetPasswordModel.UserName}'.");
+            ValidateMatchPasswords(resetPasswordModel.Password, resetPasswordModel.ConfirmPassword);
+            ValidateMinPasswordLength(resetPasswordModel.Password);
 
-            ValidateMinPasswordLength(resetPasswordModel.NewPassword);
-
-            var result =
-                await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
             if (!result.Succeeded)
             {
                 throw new CustomException($"Reset Password failed");
@@ -172,34 +173,31 @@ namespace backend.Business.Services
             return result;
         }
 
-        public async Task<IdentityResult> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel)
+        public async Task<bool> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel)
         {
             // Find the user by email
             var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
+
             // If the user is found AND Email is confirmed
-            if (user != null && await _userManager.IsEmailConfirmedAsync(user))
-            {
-                // Generate the reset password token
-                var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                // GeneratePasswordResetTokenAsync(user);
+            if (user == null) throw new CustomException("Not Success");
 
-                // Build the password reset link
-                var passwordResetLink = this.Url.Action("ResetPassword", "Account",
-                    new {email = forgotPasswordModel.Email, token = token},
-                    Protocol: Request.Url.Scheme);
+            // Generate the reset password token
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            Console.WriteLine(token);
+            var subject = "Forgot Password";
+            var to = new EmailAddress(user.Email, user.NormalizedUserName);
+            var bodyText = "Dear user, bla bla bla";
+            var bodyHtml = $"<a href='http://localhost:4200/sessions/resetPassword?token={HttpUtility.UrlEncode(token)}'>" +
+                           $"Dear user {user.NormalizedUserName}" +
+                           "In order to reset your password click here"+
+                           "</a>";
+                           
 
-                await _userManager.SendEmailAsync(user.Id, 
-                    "Confirm your account", 
-                    "Please confirm your account by clicking this link: <a href=\"" 
-                    + passwordResetLink + "\">link</a>");
-                // Log the password reset link
-                _logger.Log(LogLevel.Warning, passwordResetLink);
-
-                // Send the user to Forgot Password Confirmation view
-                // return View("ForgotPasswordConfirmation");
-            }
-
-            throw new CustomException("Not Success");
+            var sendEmailResult = await EmailService.SendEmail(to, subject, bodyText, bodyHtml);
+            Console.WriteLine(sendEmailResult.StatusCode);
+            if(sendEmailResult.StatusCode != HttpStatusCode.Accepted)
+                throw new CustomException("Send email process failed.");
+            return true;
         }
 
         public async Task<IdentityResult> UpdateCurrentUserAsync(UserInformationDto model,

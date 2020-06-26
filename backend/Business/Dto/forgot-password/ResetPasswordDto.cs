@@ -11,10 +11,13 @@ namespace backend.Business.Dto
         [JsonProperty("userName")]
         public string UserName { get; set; }
         
+        [JsonProperty("password")]
+        public string Password { get; set; }
+        
+        [JsonProperty("confirmPassword")]
+        public string ConfirmPassword { get; set; }
+
         [JsonProperty("token")]
         public string Token { get; set; }
-        
-        [JsonProperty("newPassword")]
-        public string NewPassword { get; set; }
     }
 }

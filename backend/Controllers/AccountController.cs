@@ -82,13 +82,16 @@ namespace backend.Controllers
             return Ok(await _account.ResetPasswordAsync(resetPasswordModel));
         }
         
-        [HttpPost][AllowAnonymous]
+        
+        [AllowAnonymous]
+        [HttpPost("ForgotPassword")]
         public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
             return Ok(await _account.ForgotPasswordAsync(model));
 
         }
+        
 
     }
 
