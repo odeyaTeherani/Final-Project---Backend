@@ -54,6 +54,12 @@ namespace backend.Business.Dto
         [JsonProperty("note")]
         public string Note { get; set; }
         
+        [JsonProperty("startTime")]
+        public string StartTime { get; set; }        
+        
+        [JsonProperty("endTime")]
+        public string EndTime { get; set; }
+        
         public List<string> Images { get; set; }
         
         public List<ReportDto> Reports { get; set; }

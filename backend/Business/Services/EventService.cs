@@ -61,7 +61,7 @@ namespace backend.Business.Services
             return _mapper.Map<EventDto>(result);
         }
 
-        public async Task<EventDto> AddNewEventAsync([FromBody] EventDto newEvent, string userName)
+        public async Task<EventDto> AddNewEventAsync(EventDto newEvent, string userName)
         {
             var mappedEvent = _mapper.Map<Event>(newEvent);
             var reportsIds = mappedEvent.Reports?.Select(report => report.Id).ToList();

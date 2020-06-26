@@ -63,11 +63,14 @@ namespace backend.Business.Dto
                     cfg.CreateMap<ApplicationUser, UserInformationDto>();
 
                     cfg.CreateMap<Event, EventDto>()
-                        .ForMember(x => x.Images,
-                            opt => opt.Ignore())
+                        .ForMember(x => x.Images, opt => opt.Ignore())
+                        .ForMember(x => x.StartTime, opt => opt.Ignore())
+                        .ForMember(x => x.EndTime, opt => opt.Ignore())
                         .AfterMap((report, reportDto) =>
                         {
                             reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
+                            reportDto.StartTime = report.StartDate.ToString("HH:mm");
+                            reportDto.EndTime = report.EndDate.ToString("HH:mm");
                         });
                     cfg.CreateMap<EventDto, Event>()
                         .ForMember(x => x.Images,
@@ -85,6 +88,10 @@ namespace backend.Business.Dto
                                     ImageData = imageData
                                 }).ToList()
                             );
+
+                            // format date
+                            e.StartDate = MapDateAndTimeToDateTimeObject(dto.StartDate.Date, dto.StartTime);
+                            e.EndDate = MapDateAndTimeToDateTimeObject(dto.EndDate.Date, dto.EndTime);
                         });
 
                     cfg.CreateMap<LocationDto, Location>()
@@ -124,6 +131,17 @@ namespace backend.Business.Dto
                     //cfg.CreateMap<UserDto, User>();
                 }
             );
+        }
+
+        private static DateTime MapDateAndTimeToDateTimeObject(DateTime date, string time)
+        {
+            var resultStatus = DateTime.TryParse(date.ToString("yyyy-MM-dd") + " " + time, out var result);
+            if (!resultStatus)
+            {
+                Console.WriteLine($"date {date} with time {time} is not valid");
+            }
+
+            return result;
         }
     }
 }
