@@ -28,20 +28,19 @@ namespace backend.Data.Models
         public int? LocationId { get; set; }
         public Location? Location { get; set; }
 
-        public DateTime? CreateDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateTime CreateDate { get; set; }
+        public DateTime EndDate { get; set; }
         public DateTime StartDate { get; set; }
-        public int? NumOfInjured { get; set; }
-        public int? NumOfDead { get; set; }
-        public int? NumOfPolice { get; set; }
-        public int? NumOfAmbulances { get; set; }
-        public int? NumOfFirefighters { get; set; }
-        public int? NumOfEnvironment { get; set; }
-        public int? NumOfZakaCars { get; set; }
-        public string? NameInCharge { get; set; }
+        public int NumOfInjured { get; set; }
+        public int NumOfDead { get; set; }
+        public int NumOfPolice { get; set; }
+        public int NumOfAmbulances { get; set; }
+        public int NumOfFirefighters { get; set; }
+        public int NumOfEnvironment { get; set; }
+        public int NumOfZakaCars { get; set; }
+        public string NameInCharge { get; set; }
         public string? Note { get; set; }
         public List<Report>? Reports { get; set; }
         public List<Image>? Images { get; set; }
-
     }
 }

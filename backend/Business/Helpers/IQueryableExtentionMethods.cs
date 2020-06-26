@@ -14,7 +14,7 @@ namespace backend.Business.Helpers
             {
                 queryable = queryable.Where(x =>
                     x.StartDate.Date <= date.Value.Date &&
-                    date.Value.Date <= x.EndDate.Value.Date);
+                    date.Value.Date <= x.EndDate.Date);
             }
 
             if (eventTypeId.HasValue)
