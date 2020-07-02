@@ -16,7 +16,7 @@ namespace backend.Business.Interfaces
         Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal);
         Task DeleteCurrentAccountAsync(ClaimsPrincipal userPrincipal);
         Task<IdentityResult> ResetPasswordAsync([FromBody] ResetPasswordDto resetPasswordModel);
-        Task<bool> ForgotPasswordAsync(ForgotPasswordDto forgotPasswordModel);
+        Task<bool> ForgotPasswordAsync([FromBody] ForgotPasswordDto forgotPasswordModel);
 
         void SeedRoles();
     }

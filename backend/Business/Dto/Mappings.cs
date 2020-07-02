@@ -58,7 +58,8 @@ namespace backend.Business.Dto
                     cfg.CreateMap<UserInformationDto, ApplicationUser>()
                         .ForMember(s => s.SubRole,
                             opt => opt.Ignore())
-                        .AfterMap((subRoleDto, subRole) => { subRole.SubRoleId = subRoleDto.SubRole.Id; });
+                        .AfterMap((subRoleDto, subRole) => 
+                            { subRole.SubRoleId = subRoleDto.SubRole.Id; });
 
                     cfg.CreateMap<ApplicationUser, UserInformationDto>();
 
