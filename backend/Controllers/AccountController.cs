@@ -73,7 +73,7 @@ namespace backend.Controllers
         }
 
 
-        //reset password - forget Password - TODO - nice to have
+        //reset password - forget Password
         [HttpPut("resetPassword")]
         [AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordModel)
@@ -84,8 +84,8 @@ namespace backend.Controllers
         
         
         [AllowAnonymous]
-        [HttpPost("ForgotPassword")]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordDto model)
+        [HttpPost("forgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
         {
             if (!ModelState.IsValid) return BadRequest();
             return Ok(await _account.ForgotPasswordAsync(model));

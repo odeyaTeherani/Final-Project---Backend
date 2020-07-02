@@ -16,6 +16,7 @@ using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
@@ -185,14 +186,13 @@ namespace backend.Business.Services
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
             Console.WriteLine(token);
             var subject = "Forgot Password";
-            var to = new EmailAddress(user.Email, user.NormalizedUserName);
+            var to = new EmailAddress(forgotPasswordModel.Email, user.NormalizedUserName);
             var bodyText = "Dear user, bla bla bla";
             var bodyHtml = $"<a href='http://localhost:4200/sessions/resetPassword?token={HttpUtility.UrlEncode(token)}'>" +
-                           $"Dear user {user.NormalizedUserName}" +
-                           "In order to reset your password click here"+
+                           $"Dear user {user.FirstName} {user.LastName}," +
+                           " In order to reset your password click here"+
                            "</a>";
-                           
-
+            
             var sendEmailResult = await EmailService.SendEmail(to, subject, bodyText, bodyHtml);
             Console.WriteLine(sendEmailResult.StatusCode);
             if(sendEmailResult.StatusCode != HttpStatusCode.Accepted)
@@ -229,7 +229,12 @@ namespace backend.Business.Services
 
         public async Task<UserInformationDto> GetCurrentUserAsync(ClaimsPrincipal userPrincipal)
         {
-            var result = await _userManager.GetUserAsync(userPrincipal);
+            var id = userPrincipal.FindFirst("Sub")?.Value;
+            var result = await _userManager.Users
+                .Include(x=> x.SubRole)
+                .SingleOrDefaultAsync(x => x.Id == id);
+            Console.WriteLine(result.SubRole);
+            Console.WriteLine(result);
             // var role = await _userManager.GetRolesAsync(result);
             // result.Role = role;
             if (result == null)
