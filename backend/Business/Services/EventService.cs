@@ -12,6 +12,7 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Enums;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Business.Services
@@ -96,16 +97,17 @@ namespace backend.Business.Services
 
             var originalReports = _context.Reports.Where(report => reportsIds.Contains(report.Id)).ToList();
             originalReports.ForEach(report => { report.Event = mappedEvent; });
-
+            
             await _context.SaveChangesAsync();
             return _mapper.Map<EventDto>(mappedEvent);
         }
 
         public async Task UpdateEventAsync(int id, EventDto updateEvent)
         {
-            var result = await _context.Events.SingleOrDefaultAsync(e => e.Id == id);
+            var result = await _context.Events.
+                Include(x=>x.Images)
+                .SingleOrDefaultAsync(e => e.Id == id);
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
-
             var mappedEvent = _mapper.Map<Event>(updateEvent);
             result.StartDate = updateEvent.StartDate;
             result.EndDate = updateEvent.EndDate;
@@ -120,28 +122,29 @@ namespace backend.Business.Services
             result.NumOfPolice = mappedEvent.NumOfPolice;
             result.Note = mappedEvent.Note;
             result.EventTypeId = updateEvent.EventType.Id;
-            // result.Images. = mappedEvent.Images.;
-            // result.Location = updateEvent.Location;
-            // result.Reports = updateEvent.Reports;
+            // result.Images.AddRange(mappedEvent.Images);
+            // result.Images = mappedEvent.Images;
+            result.Location = mappedEvent.Location;
             result.SeverityLevelType = updateEvent.SeverityLevelType;
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
         {
-            var result =
+            var result = 
                 await _context.Events.SingleOrDefaultAsync(e =>
                     e.Id == id); // Make sure it is single and if you didn't find return null
             if (result == null) throw new CustomException($"Event whit id {id} not found", HttpStatusCode.NotFound);
             _context.Events.Remove(result);
             await _context.SaveChangesAsync();
         }
-
+        
         private IQueryable<Event> GetEvent()
         {
             return _queryHelper.GetAllIncluding(x => x.EventType, x => x.Images, x => x.Location);
         }
-
+        
+     
 
         private bool ShouldFilter(DateTime? date = null, int? eventTypeId = null, SeverityLevel? severityLevel = null)
         {

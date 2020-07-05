@@ -67,9 +67,9 @@ namespace backend.Controllers
 
         // https://localhost:44341/event/{id}
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-             _eventService.DeleteAsync(id);
+             await _eventService.DeleteAsync(id);
              return Ok();
         }
     }
