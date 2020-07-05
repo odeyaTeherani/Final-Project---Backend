@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using backend.Business.Dto;
 using backend.Business.Interfaces;
@@ -26,6 +28,12 @@ namespace backend.Controllers
         {
             // consider to implement paging mechanism 
             return await _eventService.GetAllAsync(date,eventTypeId,severityLevel);
+        }        
+        
+        [HttpGet("consult")]
+        public async Task<ConsultDto> GetConsult(int? hours = null,int? eventTypeId= null,SeverityLevel? severityLevel = null)
+        {
+            return await _eventService.GetConsultAsync(hours,eventTypeId,severityLevel);
         }
 
         // https://localhost:44341/event/{id}

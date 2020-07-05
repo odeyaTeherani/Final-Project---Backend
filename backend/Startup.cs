@@ -38,6 +38,8 @@ namespace backend
         {
             services.AddControllers().AddNewtonsoftJson();
 
+            services.AddHttpClient();
+            
             services.AddCors(options =>
             {
                 options.AddPolicy(name: corsSettings,
