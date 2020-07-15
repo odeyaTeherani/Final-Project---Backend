@@ -11,5 +11,6 @@ namespace backend.Data.Models
         public string Image { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        public string? CarNumber { get; set; }
     }
 }

@@ -40,13 +40,25 @@ namespace backend.Business.Services
                 var all = await GetUser()
                     .FilterUsers(name, email, subRoleId).ToListAsync();
                 var orderByDescending = all.OrderByDescending(e => e.LastName);
-                return _mapper.Map<List<UserInformationDto>>(orderByDescending);
+                var mapped = _mapper.Map<List<UserInformationDto>>(orderByDescending);
+                foreach (var user in mapped)
+                {
+                    var roles = await _userManager.GetRolesAsync(_mapper.Map<ApplicationUser>(user));
+                    user.Role = roles[0];
+                }
+                return mapped;
             }
             else
             {
                 var all = await GetUser().ToListAsync();
                 var orderByDescending = all.OrderByDescending(e => e.LastName);
-                return _mapper.Map<List<UserInformationDto>>(orderByDescending);
+                var mapped = _mapper.Map<List<UserInformationDto>>(orderByDescending);
+                foreach (var user in mapped)
+                {
+                    var roles = await _userManager.GetRolesAsync(_mapper.Map<ApplicationUser>(user));
+                    user.Role = roles[0];
+                }
+                return mapped;
             }
         }
 
@@ -78,6 +90,7 @@ namespace backend.Business.Services
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
             user.Image = model.Image;
+            user.CarNumber = model.CarNumber;
 
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles);

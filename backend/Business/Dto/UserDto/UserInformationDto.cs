@@ -51,6 +51,9 @@ namespace backend.Business.Dto.UserDto
         
         [JsonProperty("image")]
         public string Image { get; set; }
+        
+        [JsonProperty("carNumber")]
+        public string? CarNumber { get; set; }
 
     }
 }
