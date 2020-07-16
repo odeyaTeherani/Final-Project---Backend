@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Data;
 using backend.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -47,7 +48,9 @@ namespace backend
                     {
                         builder.WithOrigins(
                                 "http://localhost:4200",
-                                "https://localhost:4200")
+                                "https://localhost:4200",
+                                "https://unify-web-app.azurewebsites.net/",
+                                "http://unify-web-app.azurewebsites.net/")
                             .AllowAnyMethod()
                             .AllowAnyHeader();
                     });
@@ -94,9 +97,10 @@ namespace backend
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "wwwroot/ClientApp/dist";
+                configuration.RootPath = "wwwroot/dist/client";
             });
 
+         
             // ===== Add Jwt Authentication ======== //
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
@@ -131,9 +135,7 @@ namespace backend
             app.UseExceptionHandler(env.IsDevelopment() ? "/error-local-development" : "/error");
 
             app.UseHttpsRedirection();
-            
             app.UseStaticFiles();
-            
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
@@ -151,7 +153,13 @@ namespace backend
             {
                 endpoints.MapControllers();
             });
-            
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "wwwroot/dist/client";
+            });
+          
+
         }
     }
 }
