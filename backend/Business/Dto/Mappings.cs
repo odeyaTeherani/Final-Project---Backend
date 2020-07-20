@@ -67,12 +67,13 @@ namespace backend.Business.Dto
                         .ForMember(x => x.Images, opt => opt.Ignore())
                         .ForMember(x => x.StartTime, opt => opt.Ignore())
                         .ForMember(x => x.EndTime, opt => opt.Ignore())
-                        .AfterMap((report, reportDto) =>
+                        .AfterMap((even, eventDto) =>
                         {
-                            reportDto.Images = report.Images.Select(image => image.ImageData).ToList();
-                            reportDto.StartTime = report.StartDate.ToString("HH:mm");
-                            reportDto.EndTime = report.EndDate.ToString("HH:mm");
+                            eventDto.Images = even.Images.Select(image => image.ImageData).ToList();
+                            eventDto.StartTime = even.StartDate.ToString("HH:mm");
+                            eventDto.EndTime = even.EndDate.ToString("HH:mm");
                         });
+                    
                     cfg.CreateMap<EventDto, Event>()
                         .ForMember(x => x.Images,
                             opt => opt.Ignore())
