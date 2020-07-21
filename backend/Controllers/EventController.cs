@@ -7,6 +7,7 @@ using backend.Business.Dto;
 using backend.Business.Interfaces;
 using backend.Data.Enums;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -72,5 +73,23 @@ namespace backend.Controllers
              await _eventService.DeleteAsync(id);
              return Ok();
         }
+        
+        [AllowAnonymous]
+        [HttpGet("seedEvents")]
+        public async Task<IActionResult> SeedEvents()
+        {
+            try
+            {
+                await _eventService.ABC();
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+           
+        }
+        
     }
 }

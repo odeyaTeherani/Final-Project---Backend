@@ -18,5 +18,6 @@ namespace backend.Business.Interfaces
         Task<EventDto> AddNewEventAsync([FromBody] EventDto newEvent, string userName);
         Task UpdateEventAsync(int id, EventDto updateEvent);
         Task DeleteAsync(int id);
+        Task ABC();
     }
 }

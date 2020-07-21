@@ -143,7 +143,38 @@ namespace backend.Business.Services
             _context.Events.Remove(result);
             await _context.SaveChangesAsync();
         }
-        
+
+        public async Task ABC()
+        {
+            var envents = new List<Event>();
+            var random = new Random(); 
+            for (int i = 0; i < 10000; i++)
+            {
+                var startDate = DateTime.Now.AddDays(random.Next(1, 50));
+                var endDate = startDate.AddDays(random.Next(1, 5));
+                envents.Add(new Event
+                {
+                    CreateDate = endDate.AddDays(1),
+                    StartDate = startDate,
+                    EndDate = endDate,
+                    NumOfAmbulances = random.Next(1, 6),
+                    NumOfInjured = random.Next(1, 35),
+                    NumOfEnvironment = random.Next(1, 4),
+                    NumOfPolice = random.Next(1, 6),
+                    NumOfDead = random.Next(1, 5),
+                    NumOfFirefighters = random.Next(1, 7),
+                    NumOfZakaCars = random.Next(1, 4),
+                    Note = $"Test Not {i}",
+                    EventTypeId = random.Next(1, 3),
+                    SeverityLevelType = (SeverityLevel)random.Next(1, 5),
+                    NameInCharge = "system"
+                });
+            }
+
+            await _context.Events.AddRangeAsync(envents);
+            await _context.SaveChangesAsync();
+        }
+
         private IQueryable<Event> GetEvent()
         {
             return _queryHelper.GetAllIncluding(x => x.EventType, x => x.Images, x => x.Location);
