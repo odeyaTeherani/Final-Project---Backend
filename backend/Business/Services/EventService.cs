@@ -12,8 +12,10 @@ using backend.Controllers;
 using backend.Data;
 using backend.Data.Enums;
 using backend.Data.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace backend.Business.Services
 {
@@ -22,13 +24,15 @@ namespace backend.Business.Services
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IWebHostEnvironment _environment;
         private readonly QueryHelper<Event> _queryHelper;
 
-        public EventService(ApplicationDbContext context, IMapper mapper, IHttpClientFactory httpClientFactory)
+        public EventService(ApplicationDbContext context, IMapper mapper, IHttpClientFactory httpClientFactory,IWebHostEnvironment environment)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _environment = environment;
             _queryHelper = new QueryHelper<Event>(_context);
         }
 
@@ -60,8 +64,9 @@ namespace backend.Business.Services
         public async Task<ConsultDto> GetConsultAsync(int? hours = null, int? eventTypeId = null,
             SeverityLevel? severityLevel = null)
         {
+            var url = _environment.IsDevelopment() ? "http://127.0.0.1:7000?event_type=" : "https://unify-ml-app.herokuapp.com?event_type=";
             var request = new HttpRequestMessage(HttpMethod.Get,
-                "http://127.0.0.1:7000/?event_type=" + eventTypeId + "&severity_level=" + (int) severityLevel +
+                url + eventTypeId + "&severity_level=" + (int) severityLevel +
                 "&date_diff=" + hours);
 
             var client = _httpClientFactory.CreateClient();
