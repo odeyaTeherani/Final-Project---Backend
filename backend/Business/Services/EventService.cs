@@ -167,7 +167,8 @@ namespace backend.Business.Services
                     Note = $"Test Not {i}",
                     EventTypeId = random.Next(1, 3),
                     SeverityLevelType = (SeverityLevel)random.Next(1, 5),
-                    NameInCharge = "system"
+                    NameInCharge = "system",
+                    LocationId = 33
                 });
             }
 
