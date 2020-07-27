@@ -74,7 +74,7 @@ namespace backend.Controllers
              return Ok();
         }
         
-        [AllowAnonymous]
+        /*[AllowAnonymous]
         [HttpGet("seedEvents")]
         public async Task<IActionResult> SeedEvents()
         {
@@ -89,7 +89,7 @@ namespace backend.Controllers
                 throw;
             }
            
-        }
+        }*/
         
     }
 }
